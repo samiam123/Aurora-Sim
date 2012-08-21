@@ -2890,9 +2890,9 @@ namespace OpenSim.Region.ClientStack.LindenUDP
             else if (req.AssetRequestSource == 3)
             {
                 Transfer.TransferInfo.Params = req.Params;
-                // Transfer.TransferInfo.Params = new byte[100];
+                 //Transfer.TransferInfo.Params = new byte[100];
                 //Array.Copy(req.RequestUser.AgentId.GetBytes(), 0, Transfer.TransferInfo.Params, 0, 16);
-                //Array.Copy(req.RequestUser.SessionId.GetBytes(), 0, Transfer.TransferInfo.Params, 16, 16);
+               // Array.Copy(req.RequestUser.SessionId.GetBytes(), 0, Transfer.TransferInfo.Params, 16, 16);
             }
             Transfer.TransferInfo.Size = req.AssetInf.Data.Length;
             Transfer.TransferInfo.TransferID = req.TransferRequestID;
