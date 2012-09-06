@@ -461,13 +461,15 @@ namespace Aurora.Modules.Ban
                     return false;
                 }
             }
-            //foreach (string id0 in info.KnownID0s)
+            foreach (string id0 in info.KnownID0s) //was commented out the below is active -VS
             {
-                if (info.LastKnownID0.Contains("000"))
+                //if (info.LastKnownID0.Contains("000"))
                 {
                     //Ban this asshole
-                    reason = "Viewer is blocked (IO)";
-                    return false;
+                    //reason = "Viewer is blocked (IO)";
+                    //return false;
+                    reason = "Ok ";//just say ok for now
+                    return true;//let them in for now till this is fixed
                 }
             }
 
