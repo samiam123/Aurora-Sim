@@ -84,6 +84,9 @@ namespace Aurora.Simulation.Base
             AppDomain.CurrentDomain.UnhandledException +=
                 CurrentDomain_UnhandledException;
 
+            //Allow up to 12 simultaneous connections to a given endpoint rather than 2 -OS dev
+            ServicePointManager.DefaultConnectionLimit = 12;
+
             // Add the arguments supplied when running the application to the configuration
             ArgvConfigSource configSource = new ArgvConfigSource(args);
 
