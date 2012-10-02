@@ -120,13 +120,14 @@ namespace OpenSim.Services.CapsService
                                                            service.CreateCAPS("NewFileAgentInventoryVariablePrice", ""),
                                                            NewAgentInventoryRequestVariablePrice));
 
+            // --- Commented out by skidz to fix opening an object and moving stuff into a folder, no content after relog
             //service.AddStreamHandler("CreateInventoryCategory",
             //                         new GenericStreamHandler("POST",
             //                                               service.CreateCAPS("CreateInventoryCategory", ""),
             //                                               CreateInventoryCategory));
-
+            // end above -------------------------------------------------------------------
             
-            /*method = delegate(string request, string path, string param,
+           /* method = delegate(string request, string path, string param,
                                                                 OSHttpRequest httpRequest, OSHttpResponse httpResponse)
             {
                 return HandleInventoryItemCreate(request, m_service.AgentID);
@@ -153,7 +154,7 @@ namespace OpenSim.Services.CapsService
             m_service.RemoveStreamHandler("FetchLib2", "POST");
             m_service.RemoveStreamHandler("NewFileAgentInventory", "POST");
             m_service.RemoveStreamHandler("NewFileAgentInventoryVariablePrice", "POST");
-            m_service.RemoveStreamHandler("InventoryItemCreate", "POST");
+            // m_service.RemoveStreamHandler("InventoryItemCreate", "POST"); //not used as its comented out above -VS
         }
 
         #endregion
@@ -303,8 +304,8 @@ namespace OpenSim.Services.CapsService
         {
             OSDMap map = (OSDMap) OSDParser.DeserializeLLSDXml(request);
             string asset_type = map["asset_type"].AsString();
-            int charge = 0;
-            int resourceCost = 0;
+            int charge = 0; //If this is set to a value then the user gets charged for that amount -VS
+            int resourceCost = 0; //same with this i think -VS
             if (!ChargeUser(asset_type, map, out charge, out resourceCost))
             {
                 map = new OSDMap();
@@ -343,7 +344,7 @@ namespace OpenSim.Services.CapsService
                     asset_type == "object")
                 {
                     OSDMap meshMap = (OSDMap)map["asset_resources"];
-                    //OSDArray instance_list = (OSDArray)meshMap["instance_list"];
+                    //OSDArray instance_list = (OSDArray)meshMap["instance_list"]; humm not sure what this is -VS
                     int mesh_list = meshMap.ContainsKey("mesh_list") ? ((OSDArray)meshMap["mesh_list"]).Count : 1;
                     int texture_list = meshMap.ContainsKey("texture_list") ? ((OSDArray)meshMap["texture_list"]).Count : 1;
                     if (texture_list == 0) texture_list = 1;
