@@ -4844,7 +4844,22 @@ namespace Aurora.ScriptEngine.AuroraDotNetEngine.APIs
             Vector3 av3 = new Vector3(Util.Clip((float)color.x, 0.0f, 1.0f),
                                       Util.Clip((float)color.y, 0.0f, 1.0f),
                                       Util.Clip((float)color.z, 0.0f, 1.0f));
-            m_host.SetText(text.Length > 254 ? text.Remove(254) : text, av3, Util.Clip((float)alpha, 0.0f, 1.0f));
+           /* m_host.SetText(text.Length > 254 ? text.Remove(254) : text, av3, Util.Clip((float)alpha, 0.0f, 1.0f)); //was -VS
+           */
+
+           /* Added one block below for testing. DJ found a crash bug on os and this was there fix -VS*/
+            if (text.Length > 254)
+                text = text.Remove(254);
+            byte[] data;
+           do
+            {
+               data = Util.UTF8.GetBytes(text);
+               if (data.Length > 254)
+                    text = text.Substring(0, text.Length - 1);
+            } while (data.Length > 254);
+            m_host.SetText(text, av3, Util.Clip((float)alpha, 0.0f, 1.0f));
+           /* ----------------------End added Block----------------------------------------------------------------*/
+
             //m_host.ParentGroup.HasGroupChanged = true;
             //m_host.ParentGroup.ScheduleGroupForFullUpdate();
         }
