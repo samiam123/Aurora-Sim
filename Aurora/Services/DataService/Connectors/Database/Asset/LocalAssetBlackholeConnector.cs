@@ -56,7 +56,7 @@ namespace Aurora.Services.DataService.Connectors.Database.Asset
         private readonly List<Blank> m_genericTasks = new List<Blank>();
         private readonly Stopwatch sw = new Stopwatch();
         private readonly Timer taskTimer = new Timer();
-        private int NumberOfDaysForOldAssets = -30;
+        private int NumberOfDaysForOldAssets = -99930;//gets this from the ini. was -30 -VS
 
         private int convertCount;
         private int convertCountDupe;
@@ -66,7 +66,7 @@ namespace Aurora.Services.DataService.Connectors.Database.Asset
         private string m_CacheDirectoryBackup = "./BlackHoleBackup";
         private bool m_Enabled;
         private IGenericData m_Gd;
-        private bool m_pointInventory2ParentAssets = true;
+        private bool m_pointInventory2ParentAssets = true;//gets this from ini -VS
         private bool needsConversion;
         private readonly List<string> lastNotFound = new List<string>();
 
@@ -154,7 +154,7 @@ namespace Aurora.Services.DataService.Connectors.Database.Asset
                     needsConversion = false;
                 }
                 convertCount = 0;
-                taskTimer.Interval = 60000;
+                taskTimer.Interval = 60000;//60 seconds ? -VS
                 taskTimer.Elapsed += t_Elapsed;
                 taskTimer.Start();
             }
@@ -601,7 +601,7 @@ namespace Aurora.Services.DataService.Connectors.Database.Asset
 
         private bool Delete(UUID id, bool assignHashCodeCheckTask, bool ignoreFlags, AssetBase asset)
         {
-            ResetTimer(15000);
+            ResetTimer(15000);//15 seconds ? -VS
             string tableName = "auroraassets_" + id.ToString().Substring(0, 1);
             try
             {
@@ -687,7 +687,7 @@ namespace Aurora.Services.DataService.Connectors.Database.Asset
                         stream = null;
                         if (tryCount <= 1)
                         {
-                            Thread.Sleep(500);
+                            Thread.Sleep(500);//Mil-Seconds -VS
                             tryCount = tryCount + 1;
                             WriteFile(assetid, data, tryCount);
                         }
@@ -772,7 +772,7 @@ namespace Aurora.Services.DataService.Connectors.Database.Asset
             // check the files results with hash.. see if they match
             if (hashCode != Convert.ToBase64String(new SHA256Managed().ComputeHash(results)) + results.Length)
             {
-                // seen this happen a couple times.. recovery seems to work good..
+                // seen this happen a couple times.. recovery seems to work well..
                 if (!waserror)
                 {
                     if (RestoreBackup(hashCode))
@@ -796,7 +796,7 @@ namespace Aurora.Services.DataService.Connectors.Database.Asset
         {
             string backupfile = GetFileName(hashCode, true) + ".7z";
             string file = GetFileName(hashCode, false);
-            // ever now and then getting system io exceptions because the file already exist
+            // every now and then getting system io exceptions because the file already exist
             try
             {
                 if (File.Exists(backupfile))
@@ -1209,7 +1209,7 @@ namespace Aurora.Services.DataService.Connectors.Database.Asset
                 try
                 {
                     QueryFilter filter = new QueryFilter();
-                    filter.andLessThanFilters["access_time"] = Util.ToUnixTime(DateTime.UtcNow.AddDays(NumberOfDaysForOldAssets));
+                    filter.andLessThanFilters["access_time"] = Util.ToUnixTime(DateTime.UtcNow.AddDays(NumberOfDaysForOldAssets));//gets this from ini -VS
                     List<string> findOld2 = m_Gd.Query(new string[1] { "id" }, "auroraassets_" + UUID.Random().ToString().ToCharArray()[0], filter, null, 0, 1);
                     if (findOld2.Count >= 1)
                     {

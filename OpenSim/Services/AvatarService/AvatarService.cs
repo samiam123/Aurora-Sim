@@ -162,7 +162,19 @@ namespace OpenSim.Services.AvatarService
 
             for (int i = 0; i < AvatarWearable.MAX_WEARABLES; i++)
             {
-                for (int j = 0; j < appearance.Wearables[j].Count; j++)
+                /*for (int j = 0; j < appearance.Wearables[j].Count; j++) // was -VS
+                 This same code is also found in AvatarFactoryModule.cs changed there to match
+                 not clear as to why its done in 2 places -VS
+                */
+
+                /* Fix the use of the wrong index when locating the assets associated
+                 with wearables. The fact that this hasn't caused problems earlier
+                 suggests either that no one is using multiple layers of wearables or
+                 that this code is useless because the assets are coming in with the
+                 wearables request.*/  
+
+                for (int j = 0; j < appearance.Wearables[i].Count; j++) /* testing OS change by Mic Bowman -VS*/
+
                 {
                     if (appearance.Wearables[i][j].ItemID == UUID.Zero)
                         continue;
