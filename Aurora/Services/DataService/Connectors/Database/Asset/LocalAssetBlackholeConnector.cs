@@ -924,7 +924,7 @@ namespace Aurora.Services.DataService.Connectors.Database.Asset
                             asset.Flags |= AssetFlags.Temporary;
                         m_convertingAssets[uuid] = asset;
 
-                        ResetTimer(1000); //Fire the timer in 1s to finish conversion
+                        ResetTimer(190); //Fire the timer in 1s to finish conversion
                         lock (m_genericTasks)
                         {
                             AssetBase asset1 = asset;
@@ -1096,13 +1096,13 @@ namespace Aurora.Services.DataService.Connectors.Database.Asset
                 {
                     b();
                 }
-                ResetTimer(1000);
+                ResetTimer(190);
                 return;
             }
             if (needsConversion)
             {
                 StartMigration();
-                ResetTimer(1000);
+                ResetTimer(190);
                 return;
             }
 
