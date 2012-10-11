@@ -687,7 +687,7 @@ namespace Aurora.Modules.Startup
                 if (asset != null)
                     writer.WriteFile ("assets/" + asset.ID, OSDParser.SerializeJsonString(asset.ToOSD()));
                 else
-                    MainConsole.Instance.WarnFormat ("Could not find asset {0}", id);
+                    MainConsole.Instance.WarnFormat ("I Could not find asset {0}", id);
             }
 
             public void BeginLoadModuleFromArchive(IScene scene)

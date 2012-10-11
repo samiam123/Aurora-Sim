@@ -698,10 +698,11 @@ namespace Aurora.Modules.Startup.FileBasedSimulationData
 
         private void WriteAsset(string id, AssetBase asset, TarArchiveWriter writer)
         {
-            if (asset != null)
+            if (asset != null) // Found it so write it -VS
                 writer.WriteFile("assets/" + asset.ID, OSDParser.SerializeJsonString(asset.ToOSD()));
             else
-                MainConsole.Instance.WarnFormat("[FileBasedSimulationData]: Could not find asset {0} to save.", id);
+                //MainConsole.Instance.WarnFormat("[FileBasedSimulationData]: Could not find asset {0} to save.", id);
+                return; //Nothing can be done about this anyway so no point in the spam -VS
         }
 
         private byte[] WriteTerrainToStream(ITerrainChannel tModule)
