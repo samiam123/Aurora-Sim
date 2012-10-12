@@ -1418,7 +1418,7 @@ namespace Aurora.Framework.Servers.HttpServer
                 int tickdiff = Environment.TickCount - tickstart;
                 // Every month or so this will wrap and give bad numbers, not really a problem
                 // since its just for reporting, 500ms limit can be adjusted
-                if (tickdiff > 500)
+                if (tickdiff > 1500) //made this 1500 for now its all just info anyway -VS
                     MainConsole.Instance.InfoFormat("[BASE HTTP SERVER]: slow request for {0}/{1} on port {2} took {3} ms for a request sized {4}mb response sized {5}mb", HTTPMethod, RawUrl, _server.Port, tickdiff, ((float)contentLength) / 1024 / 1024, ((float)respcontentLength) / 1024 / 1024);
                 else if (MainConsole.Instance.IsEnabled(log4net.Core.Level.Trace))
                     MainConsole.Instance.TraceFormat("[BASE HTTP SERVER]: request for {0}/{1} on port {2} took {3} ms", HTTPMethod, RawUrl, _server.Port, tickdiff);

@@ -766,8 +766,8 @@ namespace OpenSim.Region.ClientStack.LindenUDP
 
         public void SendRegionHandshake(RegionInfo regionInfo, RegionHandshakeArgs args)
         {
-            RegionHandshakePacket handshake =
-                (RegionHandshakePacket) PacketPool.Instance.GetPacket(PacketType.RegionHandshake);
+            RegionHandshakePacket handshake =(RegionHandshakePacket) PacketPool.Instance.GetPacket(PacketType.RegionHandshake);
+			
             handshake.RegionInfo = new RegionHandshakePacket.RegionInfoBlock
                                        {
                                            BillableFactor = args.billableFactor,
@@ -4173,9 +4173,11 @@ namespace OpenSim.Region.ClientStack.LindenUDP
                 List<ObjectUpdatePacket.ObjectDataBlock> blocks = objectUpdateBlocks.Value;
 
                 ObjectUpdatePacket packet = (ObjectUpdatePacket) PacketPool.Instance.GetPacket(PacketType.ObjectUpdate);
+
                 packet.RegionData.RegionHandle = m_scene.RegionInfo.RegionHandle;
                 packet.RegionData.TimeDilation = timeDilation;
                 packet.ObjectData = new ObjectUpdatePacket.ObjectDataBlock[blocks.Count];
+                
 
                 for (int i = 0; i < blocks.Count; i++)
                     packet.ObjectData[i] = blocks[i];
@@ -4284,16 +4286,16 @@ namespace OpenSim.Region.ClientStack.LindenUDP
                 List<ImprovedTerseObjectUpdatePacket.ObjectDataBlock> blocks = terseUpdateBlocks.Value;
 
                 ImprovedTerseObjectUpdatePacket packet = new ImprovedTerseObjectUpdatePacket
-                                                             {
-                                                                 RegionData =
-                                                                     {
-                                                                         RegionHandle = m_scene.RegionInfo.RegionHandle,
-                                                                         TimeDilation = timeDilation
-                                                                     },
-                                                                 ObjectData =
-                                                                     new ImprovedTerseObjectUpdatePacket.ObjectDataBlock
-                                                                     [blocks.Count]
-                                                             };
+            {
+                RegionData =
+            {
+                RegionHandle = m_scene.RegionInfo.RegionHandle,
+                TimeDilation = timeDilation
+            },
+                ObjectData =
+                new ImprovedTerseObjectUpdatePacket.ObjectDataBlock
+                [blocks.Count]
+            };
 
                 for (int i = 0; i < blocks.Count; i++)
                     packet.ObjectData[i] = blocks[i];
@@ -4390,12 +4392,18 @@ namespace OpenSim.Region.ClientStack.LindenUDP
 
         public void SendAssetUploadCompleteMessage(sbyte AssetType, bool Success, UUID AssetFullID)
         {
-            AssetUploadCompletePacket newPack = new AssetUploadCompletePacket
-                                                    {
+            AssetUploadCompletePacket newPack = new AssetUploadCompletePacket(); //added (); here
+       /* // old block                                            {
                                                         AssetBlock =
                                                             {Type = AssetType, Success = Success, UUID = AssetFullID},
                                                         Header = {Zerocoded = true}
-                                                    };
+                                                    };*/
+            //neater block
+        	newPack.AssetBlock.Type = AssetType;
+            newPack.AssetBlock.Success = Success;
+            newPack.AssetBlock.UUID = AssetFullID;
+            newPack.Header.Zerocoded = true;
+			//neater									
             OutPacket(newPack, ThrottleOutPacketType.Asset);
         }
 

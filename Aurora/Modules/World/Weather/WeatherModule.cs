@@ -27,7 +27,8 @@
 
 namespace Aurora.Modules.Weather
 {
-    /*#region Weather Module
+    /*
+     #region Weather Module
     public class WeatherModule : ISharedRegionModule
     {
         #region Declares

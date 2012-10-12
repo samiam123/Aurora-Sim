@@ -91,7 +91,9 @@ namespace OpenSim.Services
                     else
                         _info["helperuri"] = MainServer.Instance.FullHostName + ":" + 9000 + "/";//Fallback... we dunno
                 }
-                if (GridEconomyURI != "" && !GridEconomyURI.EndsWith("/"))
+                //if (GridEconomyURI != "" && !GridEconomyURI.EndsWith("/"))
+                if (!GridEconomyURI.EndsWith("/"))
+
                     GridEconomyURI += "/";
                 _info["economy"] = _info["helperuri"] = GridEconomyURI;
 
