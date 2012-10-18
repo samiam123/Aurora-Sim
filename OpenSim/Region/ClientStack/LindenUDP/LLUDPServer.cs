@@ -50,8 +50,8 @@ namespace OpenSim.Region.ClientStack.LindenUDP
         /// <summary>
         ///   Maximum transmission unit, or UDP packet size, for the LLUDP protocol
         /// </summary>
-        public const int MTU = 1400;
-
+        //public const int MTU = 1400; //was
+        public const int MTU = 1496; //match common to 1496 mtu but if we are on gb lan with bh idk -VS
         /// <summary>
         ///   Number of packets to send per loop per LLUDPClient
         /// </summary>
@@ -280,8 +280,8 @@ namespace OpenSim.Region.ClientStack.LindenUDP
             if (m_scene == null)
                 throw new InvalidOperationException(
                     "[LLUDPSERVER]: Cannot LLUDPServer.Start() without an IScene reference");
-
-            //MainConsole.Instance.Info("[LLUDPSERVER]: Starting the LLUDP server in " + (m_asyncPacketHandling ? "asynchronous" : "synchronous") + " mode");
+            //un-commented one line below for debug -VS
+            MainConsole.Instance.Info("[LLUDPSERVER]: Starting the LLUDP server in " + (m_asyncPacketHandling ? "asynchronous" : "synchronous") + " mode");
 
             Start(m_recvBufferSize, m_asyncPacketHandling);
 
@@ -460,9 +460,9 @@ namespace OpenSim.Region.ClientStack.LindenUDP
                 {
                     bufferSize = dataLength;
                     buffer = new UDPPacketBuffer(udpClient.RemoteEndPoint, bufferSize);
-
-                    // MainConsole.Instance.Error("[LLUDPSERVER]: Packet exceeded buffer size! This could be an indication of packet assembly not obeying the MTU. Type=" +
-                    //     type + ", DataLength=" + dataLength + ", BufferLength=" + buffer.Data.Length + ". Dropping packet");
+                    // un-comment 2 lines below for debug use -VS
+                     MainConsole.Instance.Error("[LLUDPSERVER]: Packet exceeded buffer size! This could be an indication of packet assembly not obeying the MTU. Type=" +
+                         /*type +*/ "DataLength=" + dataLength + ", BufferLength=" + buffer.Data.Length + ". Dropping packet");
                     Buffer.BlockCopy(data, 0, buffer.Data, 0, dataLength);
                 }
             }
@@ -550,7 +550,8 @@ namespace OpenSim.Region.ClientStack.LindenUDP
 
             if (expiredPackets != null)
             {
-                //MainConsole.Instance.Debug("[LLUDPSERVER]: Resending " + expiredPackets.Count + " packets to " + udpClient.AgentID + ", RTO=" + udpClient.RTO);
+                //uncomment one line below for added debuging -VS
+                MainConsole.Instance.Debug("[LLUDPSERVER]: Resending " + expiredPackets.Count + " packets to " + udpClient.AgentID + ", RTO=" + udpClient.RTO);
 
                 // Exponential backoff of the retransmission timeout
                 udpClient.BackoffRTO();
@@ -694,11 +695,11 @@ namespace OpenSim.Region.ClientStack.LindenUDP
 
             // Stats tracking
             Interlocked.Increment(ref udpClient.PacketsSent);
-//            if (isReliable)
-//                Interlocked.Add(ref udpClient.UnackedBytes, outgoingPacket.Buffer.DataLength);
+            //if (isReliable)
+            //    Interlocked.Add(ref udpClient.UnackedBytes, outgoingPacket.Buffer.DataLength);
 
             // Put the UDP payload on the wire
-//            AsyncBeginSend(buffer);
+            // AsyncBeginSend(buffer);
 
             SyncSend(buffer);
 
