@@ -50,8 +50,8 @@ namespace OpenSim.Region.ClientStack.LindenUDP
         /// <summary>
         ///   Maximum transmission unit, or UDP packet size, for the LLUDP protocol
         /// </summary>
-        //public const int MTU = 1400; //was
-        public const int MTU = 1496; //match common to 1496 mtu but if we are on gb lan with bh idk -VS
+        public const int MTU = 1400; //1496 seems to make textuer problems setting it back again -VS
+        //public const int MTU = 1496; //match common to 1496 mtu but if we are on gb lan with bh idk -VS
         /// <summary>
         ///   Number of packets to send per loop per LLUDPClient
         /// </summary>
