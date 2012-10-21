@@ -71,7 +71,10 @@ namespace Aurora.Framework
                                        UUID agentId, float BrushSize);
 
     public delegate void NetworkStats(int inPackets, int outPackets, int unAckedBytes);
-
+	
+    /*public delegate void SetAppearance(
+        IClientAPI remoteClient, Primitive.TextureEntry textureEntry, byte[] visualParams, WearableCache[] wearables);
+	// From Retro1. below is current -VS*/	
     public delegate void SetAppearance(
         IClientAPI remoteClient, Primitive.TextureEntry textureEntry, byte[] visualParams, WearableCache[] wearables, uint serial);
 
@@ -419,6 +422,8 @@ namespace Aurora.Framework
 
     public delegate void DeactivateGesture(IClientAPI client, UUID gestureid);
 
+    // public delegate void TerrainUnacked(IClientAPI remoteClient, int patchX, int patchY);// from retro-1 -VS
+	
     public delegate void ObjectOwner(IClientAPI remoteClient, UUID ownerID, UUID groupID, List<uint> localIDs);
 
     public delegate void DirPlacesQuery(
@@ -1255,6 +1260,7 @@ namespace Aurora.Framework
         event SetScriptRunning OnSetScriptRunning;
         event UpdateVector OnAutoPilotGo;
 
+        // event TerrainUnacked OnUnackedTerrain;//from retro-1 -VS
         event ActivateGesture OnActivateGesture;
         event DeactivateGesture OnDeactivateGesture;
         event ObjectOwner OnObjectOwner;
@@ -1386,7 +1392,7 @@ namespace Aurora.Framework
         /// </summary>
         /// <param name = "map"></param>
         void SendLayerData(short[] map);
-
+        // 2 lines below were not in retro-1 -VS
         void ForceSendOnAgentUpdate(IClientAPI client, AgentUpdateArgs args);
         void OnForceChatFromViewer(IClientAPI sender, OSChatMessage e);
 
@@ -1439,6 +1445,7 @@ namespace Aurora.Framework
         void SendAvatarDataImmediate(IEntity avatar);
         void SendAvatarUpdate(IEnumerable<EntityUpdate> updates);
         void SendPrimUpdate(IEnumerable<EntityUpdate> updates);
+        // void FlushPrimUpdates();//from retro-1 -VS
 
         void SendInventoryFolderDetails(UUID ownerID, UUID folderID, List<InventoryItemBase> items,
                                         List<InventoryFolderBase> folders, int version, bool fetchFolders,
@@ -1462,6 +1469,7 @@ namespace Aurora.Framework
         ///   Used by the server to inform the client of new inventory items.
         /// </summary>
         /// <param name = "node"></param>
+        // void SendBulkUpdateInventory(InventoryNodeBase node);//from retro-1 -VS		
         void SendBulkUpdateInventory(InventoryItemBase node);
 
         /// <summary>
