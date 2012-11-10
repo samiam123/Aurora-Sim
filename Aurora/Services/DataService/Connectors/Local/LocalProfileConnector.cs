@@ -200,9 +200,10 @@ namespace Aurora.Services.DataService
                 classified.Category,
                 classified.SimName,
                 classified.CreatorUUID,
-                classified.ScopeID,
+                //classified.ScopeID, // was
                 classified.ClassifiedUUID,
                 OSDParser.SerializeJsonString(classified.ToOSD()),
+                classified.ScopeID, // testing new
                 classified.PriceForListing,
                 keywords
             };
