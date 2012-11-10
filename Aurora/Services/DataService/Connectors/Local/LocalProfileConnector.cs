@@ -230,7 +230,7 @@ namespace Aurora.Services.DataService
             for (int i = 0; i < query.Count; i += 9)
             {
                 Classified classified = new Classified();
-                classified.FromOSD((OSDMap) OSDParser.DeserializeJson(query[i + 6]));
+                classified.FromOSD((OSDMap) OSDParser.DeserializeJson(query[i + 9]));//was +6
                 classifieds.Add(classified);
             }
             return classifieds;
@@ -248,12 +248,12 @@ namespace Aurora.Services.DataService
 
             List<string> query = GD.Query(new[] { "*" }, "userclassifieds", filter, null, null, null);
 
-            if (query.Count < 9)
+            if (query.Count < 9) //was 9
             {
                 return null;
             }
             Classified classified = new Classified();
-            classified.FromOSD((OSDMap) OSDParser.DeserializeJson(query[6]));
+            classified.FromOSD((OSDMap) OSDParser.DeserializeJson(query[9])); //was 6
             return classified;
         }
 
