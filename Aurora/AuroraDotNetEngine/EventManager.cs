@@ -1049,7 +1049,9 @@ namespace Aurora.ScriptEngine.AuroraDotNetEngine
         /// <param name = "FunctionName"></param>
         /// <param name = "param"></param>
         /// <returns></returns>
-        public bool CheckIfEventShouldFire(ScriptData ID, string FunctionName, object[] param)
+        /// 
+        private bool CheckIfEventShouldFire(ScriptData ID, string FunctionName, object[] param)
+        //public bool CheckIfEventShouldFire(ScriptData ID, string FunctionName, object[] param)
         {
             lock (ID.ScriptEventLock)
             {
