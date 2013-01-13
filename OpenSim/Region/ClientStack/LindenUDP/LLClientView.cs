@@ -1192,7 +1192,7 @@ namespace OpenSim.Region.ClientStack.LindenUDP
                     for (int x = 0; x < m_scene.RegionInfo.RegionSizeX/Constants.TerrainPatchSize; x += 4)
                     {
                         SendLayerPacket(map, y, x);
-                        Thread.Sleep(35);//testing wasent used
+                        //Thread.Sleep(35);//testing wasent used
                     }
                 }
             }
@@ -1584,8 +1584,8 @@ namespace OpenSim.Region.ClientStack.LindenUDP
         ///</summary>
         public void SendTeleportStart(uint flags)
         {
-            //TeleportStartPacket tpStart = (TeleportStartPacket) PacketPool.Instance.GetPacket(PacketType.TeleportStart);//was uncommented -VS
-            TeleportStartPacket tpStart = new TeleportStartPacket();//was commented out for above -VS
+            TeleportStartPacket tpStart = (TeleportStartPacket) PacketPool.Instance.GetPacket(PacketType.TeleportStart);//was uncommented -VS
+            //TeleportStartPacket tpStart = new TeleportStartPacket();//was commented out for above -VS
             tpStart.Info.TeleportFlags = flags; //16; // Teleport via location
 
             // Hack to get this out immediately and skip throttles
@@ -1680,14 +1680,14 @@ namespace OpenSim.Region.ClientStack.LindenUDP
             {
                 OutPacket(PlacesReply, ThrottleOutPacketType.AvatarInfo);
                 //Disabled for now... it doesn't seem to work right... -VS re-enable blocks to see why
-                ///*
+                /*
                  
                 IEventQueueService eq = Scene.RequestModuleInterface<IEventQueueService>();
                 if (eq != null)
                 {
                     eq.QueryReply(PlacesReply, AgentId, RegionTypes.ToArray(), Scene.RegionInfo.RegionHandle);
                 }
-                //*/
+                */
             }
             catch (Exception ex)
             {
