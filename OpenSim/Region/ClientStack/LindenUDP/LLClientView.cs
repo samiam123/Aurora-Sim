@@ -1192,7 +1192,7 @@ namespace OpenSim.Region.ClientStack.LindenUDP
                     for (int x = 0; x < m_scene.RegionInfo.RegionSizeX/Constants.TerrainPatchSize; x += 4)
                     {
                         SendLayerPacket(map, y, x);
-                        //Thread.Sleep(35);
+                        Thread.Sleep(35);//testing wasent used
                     }
                 }
             }
@@ -1503,7 +1503,7 @@ namespace OpenSim.Region.ClientStack.LindenUDP
 
             const int maxsend = 10;
 
-            //int packets = Math.Ceiling(mapBlocks2.Length / maxsend);
+            //int packets = Math.Ceiling(mapBlocks2.Length / maxsend);//was commented out testing
 
             List<MapBlockData> sendingBlocks = new List<MapBlockData>();
 
@@ -1584,8 +1584,8 @@ namespace OpenSim.Region.ClientStack.LindenUDP
         ///</summary>
         public void SendTeleportStart(uint flags)
         {
-            TeleportStartPacket tpStart = (TeleportStartPacket) PacketPool.Instance.GetPacket(PacketType.TeleportStart);
-            //TeleportStartPacket tpStart = new TeleportStartPacket();
+            //TeleportStartPacket tpStart = (TeleportStartPacket) PacketPool.Instance.GetPacket(PacketType.TeleportStart);//was uncommented -VS
+            TeleportStartPacket tpStart = new TeleportStartPacket();//was commented out for above -VS
             tpStart.Info.TeleportFlags = flags; //16; // Teleport via location
 
             // Hack to get this out immediately and skip throttles
@@ -1679,12 +1679,15 @@ namespace OpenSim.Region.ClientStack.LindenUDP
             try
             {
                 OutPacket(PlacesReply, ThrottleOutPacketType.AvatarInfo);
-                //Disabled for now... it doesn't seem to work right...
-                /*IEventQueueService eq = Scene.RequestModuleInterface<IEventQueueService>();
+                //Disabled for now... it doesn't seem to work right... -VS re-enable blocks to see why
+                ///*
+                 
+                IEventQueueService eq = Scene.RequestModuleInterface<IEventQueueService>();
                 if (eq != null)
                 {
                     eq.QueryReply(PlacesReply, AgentId, RegionTypes.ToArray(), Scene.RegionInfo.RegionHandle);
-                }*/
+                }
+                //*/
             }
             catch (Exception ex)
             {
@@ -1726,7 +1729,8 @@ namespace OpenSim.Region.ClientStack.LindenUDP
                     continue;
                 }
 
-                /*if ((entity is SceneObjectPart &&
+                /*
+                 if ((entity is SceneObjectPart &&
                     ((SceneObjectPart)entity).IsAttachment) ||
                     (entity is SceneObjectGroup &&
                     ((SceneObjectGroup)entity).RootPart.IsAttachment))
@@ -1734,7 +1738,8 @@ namespace OpenSim.Region.ClientStack.LindenUDP
                     // Do nothing
                 }
                 else if(entity is SceneObjectPart)
-                    m_killRecord.Add(entity.LocalId);*/
+                    m_killRecord.Add(entity.LocalId);
+                 */
                 KillObjectPacket.ObjectDataBlock block = new KillObjectPacket.ObjectDataBlock {ID = entity.LocalId};
                 kill.ObjectData[i] = block;
                 i++;
@@ -13524,7 +13529,7 @@ namespace OpenSim.Region.ClientStack.LindenUDP
                 (RebakeAvatarTexturesPacket) PacketPool.Instance.GetPacket(PacketType.RebakeAvatarTextures);
 
             pack.TextureData = new RebakeAvatarTexturesPacket.TextureDataBlock {TextureID = textureID};
-            //            OutPacket(pack, ThrottleOutPacketType.Texture);
+                        OutPacket(pack, ThrottleOutPacketType.Texture); //was commented out testing -VS
             OutPacket(pack, ThrottleOutPacketType.AvatarInfo);
         }
 
