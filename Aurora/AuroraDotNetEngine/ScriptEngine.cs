@@ -664,17 +664,10 @@ namespace Aurora.ScriptEngine.AuroraDotNetEngine
                 VersionID = Interlocked.Read(ref ID.VersionID),
                 State = ID.State
             };
-<<<<<<< .mine
-           
-           // if(EventManager.CheckIfEventShouldFire(ID, FunctionName, param))
-           return MaintenanceThread.AddEventSchQIS(QIS, priority);
-           // return false;
-=======
 
             if (EventManager.CheckIfEventShouldFire(ID, FunctionName, param))
                 return MaintenanceThread.AddEventSchQIS(QIS, priority);
             return false;
->>>>>>> .theirs
         }
 
         #endregion
