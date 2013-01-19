@@ -6556,14 +6556,20 @@ namespace Aurora.ScriptEngine.AuroraDotNetEngine.APIs
                             if (parcelOwned && land.LandData.OwnerID == id ||
                                parcel && land.LandData.GlobalID == id)
                             {
-                                result.Add(ssp.UUID.ToString());
+                                //result.Add(ssp.UUID.ToString());
+
+                                result.Add(new LSL_Key(ssp.UUID.ToString()));
+
                             }
                         }
 
                     }
                     else
                     {
-                        result.Add(ssp.UUID.ToString());
+                        //result.Add(ssp.UUID.ToString());
+
+                        result.Add(new LSL_Key(ssp.UUID.ToString()));  
+
                     }
                 }
 
