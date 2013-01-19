@@ -45,13 +45,24 @@ namespace Aurora.Framework.Servers.HttpServer
         private Thread[] m_workerThreads;
         private Thread m_watcherThread;
         private PollServiceWorkerThread[] m_PollServiceWorkerThreads;
-        private bool m_running = true;
+        //private bool m_running = true;
+
+        private volatile bool m_running = true;
+        private int m_pollTimeout;
+
         private readonly object m_queueSync = new object();
 
         public PollServiceRequestManager(BaseHttpServer pSrv, uint pWorkerThreadCount, int pTimeout)
         {
             m_server = pSrv;
             m_WorkerThreadCount = pWorkerThreadCount;
+
+            m_pollTimeout = pTimeout;
+        }
+        public void Start()
+        {
+            m_running = true;
+
             m_workerThreads = new Thread[m_WorkerThreadCount];
             m_PollServiceWorkerThreads = new PollServiceWorkerThread[m_WorkerThreadCount];
             m_workerThreads = new Thread[m_WorkerThreadCount];
@@ -59,16 +70,18 @@ namespace Aurora.Framework.Servers.HttpServer
             //startup worker threads
             for (uint i = 0; i < m_WorkerThreadCount; i++)
             {
-                m_PollServiceWorkerThreads[i] = new PollServiceWorkerThread(m_server, pTimeout);
+                // m_PollServiceWorkerThreads[i] = new PollServiceWorkerThread(m_server, pTimeout);
+
+                m_PollServiceWorkerThreads[i] = new PollServiceWorkerThread(m_server, m_pollTimeout);
+
                 m_PollServiceWorkerThreads[i].ReQueue += ReQueueEvent;
-                
-                m_workerThreads[i] = new Thread(m_PollServiceWorkerThreads[i].ThreadStart)
-                                            {Name = String.Format("PollServiceWorkerThread{0}", i)};
+
+                m_workerThreads[i] = new Thread(m_PollServiceWorkerThreads[i].ThreadStart) { Name = String.Format("PollServiceWorkerThread{0}", i) };
                 m_workerThreads[i].Start();
             }
 
             //start watcher threads
-            m_watcherThread = new Thread(ThreadStart) {Name = "PollServiceWatcherThread"};
+            m_watcherThread = new Thread(ThreadStart) { Name = "PollServiceWatcherThread" };
             m_watcherThread.Start();
         }
 
@@ -135,23 +148,30 @@ namespace Aurora.Framework.Servers.HttpServer
 
         }
 
-        ~PollServiceRequestManager()
+        //~PollServiceRequestManager()
+
+        public void Stop()
         {
-            foreach (object o in m_requests)
-            {
-                PollServiceHttpRequest req = (PollServiceHttpRequest)o;
-                PollServiceWorkerThread.DoHTTPGruntWork(
-                    m_server, req, req.PollServiceArgs.NoEvents(req.RequestID, req.PollServiceArgs.Id));
-            }
-
-            m_requests.Clear();
-
-            foreach (Thread t in m_workerThreads)
-            {
-                t.Abort();
-            }
-
             m_running = false;
+
+            {
+                foreach (object o in m_requests)
+                {
+                    PollServiceHttpRequest req = (PollServiceHttpRequest)o;
+                    PollServiceWorkerThread.DoHTTPGruntWork(
+                        m_server, req, req.PollServiceArgs.NoEvents(req.RequestID, req.PollServiceArgs.Id));
+                }
+
+                m_requests.Clear();
+
+                foreach (Thread t in m_workerThreads)
+                {
+                    t.Abort();
+                }
+
+                // m_running = false;
+
+            }
         }
     }
 }
