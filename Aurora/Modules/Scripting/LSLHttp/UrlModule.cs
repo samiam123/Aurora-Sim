@@ -54,6 +54,7 @@ namespace Aurora.Modules.Scripting
         public string body;
         public int responseCode;
         public string responseBody;
+		public string responseType = "text/plain";
         public string contentType;
         //public ManualResetEvent ev;
         public bool requestDone;
@@ -209,9 +210,28 @@ namespace Aurora.Modules.Scripting
             if (m_RequestMap.ContainsKey(request))
             {
                 UrlData urlData = m_RequestMap[request];
+
+                string responseBody = body;
+                if (urlData.requests[request].responseType.Equals("text/plain"))
+                {
+                    string value;
+                    if (urlData.requests[request].headers.TryGetValue("user-agent", out value))
+                    {
+                        if (value != null && value.IndexOf("MSIE") >= 0)
+                        {
+                            // wrap the html escaped response if the target client is IE
+                            // It ignores "text/plain" if the body is html
+                            responseBody = "<html>" + System.Web.HttpUtility.HtmlEncode(body) + "</html>";
+                        }
+                    }
+                }
+
                 urlData.requests[request].responseCode = status;
-                urlData.requests[request].responseBody = body;
+                urlData.requests[request].responseBody = responseBody;
+
+               // urlData.requests[request].responseBody = body;
                 //urlData.requests[request].ev.Set();
+
                 urlData.requests[request].requestDone =true;
             }
             else
