@@ -29,21 +29,27 @@
 // #define WAIT_ON_INPROGRESS_REQUESTS
 
 using System;
-using System.Collections.Generic;
+
 using System.IO;
+
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+// using System.Threading; //added -VS
 using System.Timers;
 using Aurora.Simulation.Base;
+// using log4net; //added -vs
 using Nini.Config;
 using OpenMetaverse;
 using Aurora.Framework;
 using OpenSim.Region.Framework.Scenes;
 using OpenSim.Services.Interfaces;
-using ProtoBuf;
+using ProtoBuf; //Humm not sure what this is -VS
 
+//[assembly: Addin("FlotsamAssetCache", "1.1")]
+//[assembly: AddinDependency("OpenSim", "0.5")]
 namespace OpenSim.Services
 {
     public class FlotsamAssetCache : IService, IImprovedAssetCache
@@ -56,7 +62,7 @@ namespace OpenSim.Services
 
         private readonly List<char> m_InvalidChars = new List<char>();
 
-        private int m_logLevel;
+        private int m_logLevel = 0;
         private ulong m_HitRateDisplay = 1; // How often to display hit statistics, given in requests
 
         private static ulong m_Requests;
@@ -105,11 +111,12 @@ namespace OpenSim.Services
         private HashSet<string> m_CurrentlyWriting = new HashSet<string>();
 #endif
 
+        //private bool m_FileCacheEnabled = true;//added -VS
         private ExpiringCache<string, AssetBase> m_MemoryCache;
-        private bool m_MemoryCacheEnabled = true;
+        private bool m_MemoryCacheEnabled = true; //was true -VS
 
         // Expiration is expressed in hours.
-        private const double m_DefaultMemoryExpiration = 1.0;
+        private const double m_DefaultMemoryExpiration = 2; //was 1.0 -VS
         private const double m_DefaultFileExpiration = 48;
         private TimeSpan m_MemoryExpiration = TimeSpan.Zero;
         private TimeSpan m_FileExpiration = TimeSpan.Zero;
@@ -157,7 +164,7 @@ namespace OpenSim.Services
                 {
                     m_MemoryCache = new ExpiringCache<string, AssetBase>();
 
-                    //MainConsole.Instance.InfoFormat("[FLOTSAM ASSET CACHE]: {0} enabled", this.Name);
+                    MainConsole.Instance.InfoFormat("[FLOTSAM ASSET CACHE]: {0} enabled", this.Name);
 
                     IConfig assetConfig = config.Configs["AssetCache"];
                     if (assetConfig == null)
@@ -170,7 +177,7 @@ namespace OpenSim.Services
                     m_CacheDirectory = assetConfig.GetString("CacheDirectory", m_DefaultCacheDirectory);
                     //MainConsole.Instance.InfoFormat("[FLOTSAM ASSET CACHE]: Cache Directory", m_DefaultCacheDirectory);
 
-                    m_MemoryCacheEnabled = assetConfig.GetBoolean("MemoryCacheEnabled", false);
+                    m_MemoryCacheEnabled = assetConfig.GetBoolean("MemoryCacheEnabled", false);//was false -VS
                     m_MemoryExpiration =
                         TimeSpan.FromHours(assetConfig.GetDouble("MemoryCacheTimeout", m_DefaultMemoryExpiration));
 
@@ -452,13 +459,12 @@ namespace OpenSim.Services
                 asset = ProtoBuf.Serializer.Deserialize<AssetBase>(s);
                 s.Close();
             }
-            catch
+           catch      
             {
-            }
-            UpdateMemoryCache(id, asset, asset == null ? true : forceMemCache);
-
-            m_DiskHits++;
-            return asset;
+            }//huh?  -VS
+                UpdateMemoryCache(id, asset, asset == null ? true : forceMemCache);
+                m_DiskHits++;
+                return asset;
         }
 
         private static void InsertAsset(string filename, AssetBase asset, string directory, string tempname)
@@ -471,7 +477,7 @@ namespace OpenSim.Services
             Stream s = File.Open(tempname, FileMode.OpenOrCreate);
             ProtoBuf.Serializer.Serialize<AssetBase>(s, asset);
             s.Close();
-            //File.WriteAllText(tempname, OpenMetaverse.StructuredData.OSDParser.SerializeJsonString(asset.ToOSD()));
+            //File.WriteAllText(tempname, OpenMetaverse.StructuredData.OSDParser.SerializeJsonString(asset.ToOSD()));// bad idea this isant writing right -VS
 
             // Now that it's written, rename it so that it can be found.
             if (File.Exists(filename))
@@ -527,10 +533,7 @@ namespace OpenSim.Services
 
             IAssetMonitor monitor =
                 (IAssetMonitor)
-                m_simulationBase.ApplicationRegistry.RequestModuleInterface<IMonitorModule>().GetMonitor("",
-                                                                                                         MonitorModuleHelper
-                                                                                                             .
-                                                                                                             AssetMonitor);
+                m_simulationBase.ApplicationRegistry.RequestModuleInterface<IMonitorModule>().GetMonitor("", MonitorModuleHelper.AssetMonitor);
             if (monitor != null)
             {
                 monitor.ClearAssetCacheStatistics();
