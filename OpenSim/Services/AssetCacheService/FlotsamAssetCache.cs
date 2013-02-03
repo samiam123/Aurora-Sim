@@ -37,7 +37,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-// using System.Threading; //added -VS
+//using System.Threading; //added -VS
 using System.Timers;
 using Aurora.Simulation.Base;
 // using log4net; //added -vs
@@ -48,8 +48,6 @@ using OpenSim.Region.Framework.Scenes;
 using OpenSim.Services.Interfaces;
 using ProtoBuf; //Humm not sure what this is -VS
 
-//[assembly: Addin("FlotsamAssetCache", "1.1")]
-//[assembly: AddinDependency("OpenSim", "0.5")]
 namespace OpenSim.Services
 {
     public class FlotsamAssetCache : IService, IImprovedAssetCache
@@ -63,7 +61,7 @@ namespace OpenSim.Services
         private readonly List<char> m_InvalidChars = new List<char>();
 
         private int m_logLevel = 0;
-        private ulong m_HitRateDisplay = 1; // How often to display hit statistics, given in requests
+        private ulong m_HitRateDisplay = 100; // How often to display hit statistics, given in requests
 
         private static ulong m_Requests;
         private PreAddedDictionary<string, AssetRequest> m_assetRequests = new PreAddedDictionary<string, AssetRequest>(() => new AssetRequest());
@@ -113,7 +111,7 @@ namespace OpenSim.Services
 
         //private bool m_FileCacheEnabled = true;//added -VS
         private ExpiringCache<string, AssetBase> m_MemoryCache;
-        private bool m_MemoryCacheEnabled = true; //was true -VS
+        private bool m_MemoryCacheEnabled = false; //was true -VS
 
         // Expiration is expressed in hours.
         private const double m_DefaultMemoryExpiration = 2; //was 1.0 -VS
@@ -134,7 +132,7 @@ namespace OpenSim.Services
 
         private bool m_DeepScanBeforePurge;
 
-        private static int _forceMemoryCacheAmount = 2;
+        private static int _forceMemoryCacheAmount = 4;// was 2 trying 4 -VS
         private IAssetMonitor _assetMonitor;
 
         public FlotsamAssetCache()
@@ -461,7 +459,7 @@ namespace OpenSim.Services
             }
            catch      
             {
-            }//huh?  -VS
+            }
                 UpdateMemoryCache(id, asset, asset == null ? true : forceMemCache);
                 m_DiskHits++;
                 return asset;
@@ -707,14 +705,14 @@ namespace OpenSim.Services
         /// <returns></returns>
         private int GetFileCacheCount(string dir)
         {
-#if (!ISWIN)
+// #if (!ISWIN)
             int sum = 0;
             foreach (string subdir in Directory.GetDirectories(dir))
                 sum += GetFileCacheCount(subdir);
             return Directory.GetFiles(dir).Length + sum;
-#else
-            return Directory.GetFiles(dir).Length + Directory.GetDirectories(dir).Sum(subdir => GetFileCacheCount(subdir));
-#endif
+// #else
+ //           return Directory.GetFiles(dir).Length + Directory.GetDirectories(dir).Sum(subdir => GetFileCacheCount(subdir));
+// #endif
         }
 
         /// <summary>
@@ -752,6 +750,8 @@ namespace OpenSim.Services
             if (m_AssetService == null)
                 return 0;
 
+            HashSet<UUID> uniqueUuids = new HashSet<UUID>();// added -VS
+
             Dictionary<UUID, AssetType> assets = new Dictionary<UUID, AssetType>();
             ISceneManager manager = m_simulationBase.ApplicationRegistry.RequestModuleInterface<ISceneManager>();
             if (manager != null)
@@ -763,21 +763,27 @@ namespace OpenSim.Services
                     StampRegionStatusFile(s.RegionInfo.RegionID);
 
                     IScene s1 = s;
-#if (!ISWIN)
+//#if (!ISWIN)
                     s.ForEachSceneEntity(delegate(ISceneEntity e)
                     {
                         gatherer.GatherAssetUuids(e, assets, s1);
-                    });
-#else
-                    s.ForEachSceneEntity(e => gatherer.GatherAssetUuids(e, assets, s1));
-#endif
-                }
+                   // });
+//#else
+//                    s.ForEachSceneEntity(e => gatherer.GatherAssetUuids(e, assets, s1));
+//#endif
+                //}
 
+                //foreach (UUID assetID in assets.Keys)
+                //{
+                    //string filename = GetFileName(assetID.ToString());
+
+                //-------------- Added 2 lines below -VS ----------------------------------
                 foreach (UUID assetID in assets.Keys)
                 {
-                    string filename = GetFileName(assetID.ToString());
+                    uniqueUuids.Add(assetID);
 
-                    if (File.Exists(filename))
+
+                /*    if (File.Exists(filename)) //commented out this block -VS
                     {
                         File.SetLastAccessTime(filename, DateTime.Now);
                     }
@@ -785,10 +791,32 @@ namespace OpenSim.Services
                     {
                         m_AssetService.Get(assetID.ToString());
                     }
+                 */
+                    //------------------------------Added one block -VS -------------------------------
+                    string filename = GetFileName(assetID.ToString());
+                    if (File.Exists(filename))
+                    {
+                        File.SetLastAccessTime(filename, DateTime.Now);
+                    }
+                    else //if (storeUncached)
+                    {
+                        AssetBase cachedAsset = m_AssetService.Get(assetID.ToString());
+                        if (cachedAsset == null && assets[assetID] != AssetType.Unknown)
+                        MainConsole.Instance.DebugFormat(
+                        "[FLOTSAM ASSET CACHE]: Could not find asset {0}, type {1} referenced by object {2} at {3} in scene {4} when pre-caching all scene assets",
+                        assetID, assets[assetID], e.Name, e.AbsolutePosition); //, s.Name);
+                    }
+                }
+                assets.Clear();
+               
+                });
+
                 }
             }
 
-            return assets.Keys.Count;
+            //return assets.Keys.Count;
+            return uniqueUuids.Count;
+        //----------------------------------------------End Block -VS --------------------------------
         }
 
         /// <summary>

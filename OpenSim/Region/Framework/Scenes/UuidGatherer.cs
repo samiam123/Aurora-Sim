@@ -250,7 +250,9 @@ namespace OpenSim.Region.Framework.Scenes
                     //MainConsole.Instance.DebugFormat("[ARCHIVER]: Recording {0} in script", uuid);
 
                     // Assume AssetIDs embedded in scripts are textures
-                    assetUuids[uuid] = AssetType.Texture;
+                    //assetUuids[uuid] = AssetType.Texture;//commented out _VS
+                    assetUuids[uuid] = AssetType.Unknown; //added -VS
+
                 }
             }
         }
