@@ -55,7 +55,7 @@ namespace Aurora.Services.DataService.Connectors.Database.Asset
                 {
                     return LoadAssetFromDataRead(dr.DataReader);
                 }
-                MainConsole.Instance.WarnFormat("[LocalAssetDatabase] GetMeta({0}) - Asset was not found.", uuid);
+                MainConsole.Instance.WarnFormat("[LocalAssetDatabase] GetMeta({0}) - Asset was not found.", uuid, dr);
             }
             catch (Exception e)
             {
