@@ -412,23 +412,16 @@ namespace Aurora.Physics.AuroraOpenDynamicsEngine
         {
             get
             {
-                // Average previous velocity with the new one so
+                // Averate previous velocity with the new one so
                 // client object interpolation works a 'little' better
                 if (_zeroFlag)
                     return Vector3.Zero;
 
                 Vector3 returnVelocity = Vector3.Zero;
-
-                /*returnVelocity.X = (m_lastVelocity.X + _velocity.X) / 2;
+                returnVelocity.X = (m_lastVelocity.X + _velocity.X) / 2;
                 returnVelocity.Y = (m_lastVelocity.Y + _velocity.Y) / 2;
                 returnVelocity.Z = (m_lastVelocity.Z + _velocity.Z) / 2;
-                return returnVelocity; // comment out orginal block added one below -VS */
-
-                returnVelocity.X = (m_lastVelocity.X + _velocity.X) * 0.5f; // 0.5f is mathematically equiv to '/ 2 above'
-                returnVelocity.Y = (m_lastVelocity.Y + _velocity.Y) * 0.5f;
-                returnVelocity.Z = (m_lastVelocity.Z + _velocity.Z) * 0.5f;
                 return returnVelocity;
-
             }
             set
             {
@@ -882,10 +875,10 @@ namespace Aurora.Physics.AuroraOpenDynamicsEngine
 
             if (vertexCount == 0 || indexCount == 0)
             {
-                MainConsole.Instance.WarnFormat("[PHYSICS]: Got invalid mesh on prim at <{0},{1},{2}>. It can be a sculp with alpha channel in map. Replacing it by a small box.", _position.X, _position.Y, _position.Z);
-                _size.X = 1.01f;// this seems rather small to find or see them was 0.01f -VS
-                _size.Y = 1.01f;
-                _size.Z = 1.01f;
+                MainConsole.Instance.WarnFormat("[PHYSICS]: Got invalid mesh on prim at <{0},{1},{2}>. It can be a sculpt with alpha channel in map. Replacing it by a small box.", _position.X, _position.Y, _position.Z);
+                _size.X = 0.01f;
+                _size.Y = 0.01f;
+                _size.Z = 0.01f;
                 return false;
             }
 

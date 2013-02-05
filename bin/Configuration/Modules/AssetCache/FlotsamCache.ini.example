@@ -20,7 +20,7 @@
 
     ; How often should hit rates be displayed (given in AssetRequests)
     ; 0 to disable
-    HitRateDisplay = 250
+    HitRateDisplay = 0
 
     ; Set to false for disk cache only.
     MemoryCacheEnabled = false
@@ -32,31 +32,32 @@
 
     ; How long {in hours} to keep assets cached on disk, .5 == 30 minutes
     ; Specify 0 if you do not want your disk cache to expire
-    FileCacheTimeout = 0
+    FileCacheTimeout = 24
+
     ; How often {in hours} should the disk be checked for expired files
     ; Specify 0 to disable expiration checking 
     ; .166 ;roughly every 10 minutes
-    FileCleanupTimer = 0  ;every 1 hour
+    FileCleanupTimer = 1.0  ;every 1 hour
 
     ; If WAIT_ON_INPROGRESS_REQUESTS has been defined then this specifies how
     ; long (in miliseconds) to block a request thread while trying to complete
     ; an existing write to disk.
-     WaitOnInprogressTimeout = 3000
+    ; WaitOnInprogressTimeout = 3000
 
     ; Number of tiers to use for cache directories (current valid
     ; range 1 to 3)
-    CacheDirectoryTiers = 3
+    ;CacheDirectoryTiers = 1
 
     ; Number of letters per path tier, 1 will create 16 directories
     ; per tier, 2 - 256, 3 - 4096 and 4 - 65K
-    CacheDirectoryTierLength = 4
+    ;CacheDirectoryTierLength = 3
 
     ; Warning level for cache directory size
-    CacheWarnAt = 30000
+    ;CacheWarnAt = 30000
 
     ; Perform a deep scan of all assets within all regions, looking for all assets
     ; present or referenced.  Mark all assets found that are already present in the
     ; cache, and request all assets that are found that are not already cached (this
     ; will cause those assets to be cached)
     ;
-    DeepScanBeforePurge = true
+    ; DeepScanBeforePurge = false
