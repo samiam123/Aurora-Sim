@@ -132,7 +132,7 @@ namespace OpenSim.Services
 
         private bool m_DeepScanBeforePurge;
 
-        private static int _forceMemoryCacheAmount = 4;// was 2 trying 4 -VS
+        private static int _forceMemoryCacheAmount = 2;// was 2 trying 4  Nothing to see here -VS
         private IAssetMonitor _assetMonitor;
 
         public FlotsamAssetCache()
