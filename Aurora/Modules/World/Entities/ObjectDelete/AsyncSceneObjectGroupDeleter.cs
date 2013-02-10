@@ -141,7 +141,7 @@ namespace Aurora.Modules.Entities.ObjectDelete
                 {
                     foreach (ISceneEntity grp in objectGroups)
                     {
-                        if (avatar != null && avatar.ControllingClient != null)
+                        // if (avatar != null && avatar.ControllingClient != null) //was uncommented. testing -VS
                             avatar.ControllingClient.SendKillObject(
                                 m_scene.RegionInfo.RegionHandle,
                                 grp.ChildrenEntities().ToArray());

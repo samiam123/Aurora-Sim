@@ -61,7 +61,7 @@ namespace OpenSim.Services
             if (moduleConfig != null)
             {
                 string name = moduleConfig.GetString("AssetCaching");
-                //MainConsole.Instance.DebugFormat("[ASSET CACHE] name = {0} (this module's name: {1}). Sync? ", name, Name, m_Cache.IsSynchronized);
+                MainConsole.Instance.DebugFormat("[ASSET CACHE] name = {0} (this module's name: {1}). Sync? ", name, Name, m_Cache.IsSynchronized);
 
                 if (name == Name)
                 {

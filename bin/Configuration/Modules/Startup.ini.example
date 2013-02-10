@@ -75,10 +75,10 @@
     SendTerrainByViewDistance = true
     
     ;; Enable the generation of 3D water (THIS WILL CAUSE YOUR CLIENT TO CRASH UNLESS IT SUPPORTS IT)
-    ;; Default is false
+    ;; Default is false This is layer type 88
     Use3DWater = false
     
-    ;; If you wish to have no terrain, enable this option
+    ;; If you wish to have no terrain, enable this option. You need to make a floor 1st or you cant build.
     ;; Default is false
     NoTerrain = false
 
