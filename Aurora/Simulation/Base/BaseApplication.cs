@@ -33,14 +33,18 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Aurora.Framework.Servers.HttpServer;
+// using Nini.Config;
+// using Aurora.Framework;
+using log4net;
+using log4net.Config;
 using Nini.Config;
 using Aurora.Framework;
-using log4net.Config;
-using System.Net;
+// using System.Net;
 using System.Text;
 
 namespace Aurora.Simulation.Base
@@ -109,16 +113,67 @@ namespace Aurora.Simulation.Base
             }
 
             // Increase the number of IOCP threads available. Mono defaults to a tragically low number
+            // Added one block -------------------------------------------------------- VS
+            //m_log.InfoFormat(
+            //    "[OPENSIM MAIN]: System Locale is {0}", System.Threading.Thread.CurrentThread.CurrentCulture);
+            string monoThreadsPerCpu = System.Environment.GetEnvironmentVariable("MONO_THREADS_PER_CPU");
+           // m_log.InfoFormat(
+            //    "[OPENSIM MAIN]: Environment variable MONO_THREADS_PER_CPU is {0}", monoThreadsPerCpu ?? "unset");
+
+            // Verify the Threadpool allocates or uses enough worker and IO completion threads
+			// .NET 2.0 workerthreads default to 50 *  numcores
+			// .NET 3.0 workerthreads defaults to 250 * numcores
+			// .NET 4.0 workerthreads are dynamic based on bitness and OS resources
+			// Max IO Completion threads are 1000 on all 3 CLRs.
+            int workerThreadsMin = 500;
+			int workerThreadsMax = 1000; // may need further adjustment to match other CLR
+			int iocpThreadsMin = 1000;
+			int iocpThreadsMax = 2000; // may need further adjustment to match other CLR
+            // -------------------------------------- End block -------------------------
+
             int workerThreads, iocpThreads;
             ThreadPool.GetMaxThreads(out workerThreads, out iocpThreads);
-            //MainConsole.Instance.InfoFormat("[OPENSIM MAIN]: Runtime gave us {0} worker threads and {1} IOCP threads", workerThreads, iocpThreads);
-            if (workerThreads < 500 || iocpThreads < 1000)
+            // MainConsole.Instance.InfoFormat("[AURORA MAIN]: Runtime gave us {0} worker threads and {1} IOCP threads", workerThreads, iocpThreads);
+            //if (workerThreads < 500 || iocpThreads < 1000) //commented out -VS
+
+            if (workerThreads < workerThreadsMin)
+
             {
-                workerThreads = 500;
-                iocpThreads = 1000;
+                /* workerThreads = 500; // comment out this block -VS
+                // iocpThreads = 1000;
                 //MainConsole.Instance.Info("[OPENSIM MAIN]: Bumping up to 500 worker threads and 1000 IOCP threads");
                 ThreadPool.SetMaxThreads(workerThreads, iocpThreads);
+                 */
+                workerThreads = workerThreadsMin;
+                //+m_log.InfoFormat("[OPENSIM MAIN]: Bumping up to worker threads to {0}", workerThreads);
+
             }
+            if (workerThreads > workerThreadsMax)
+            {
+                workerThreads = workerThreadsMax;
+               // m_log.InfoFormat("[OPENSIM MAIN]: Limiting worker threads to {0}",workerThreads);
+            }
+			// Increase the number of IOCP threads available.
+			// Mono defaults to a tragically low number (24 on 6-core / 8GB Fedora 17)
+			if (iocpThreads < iocpThreadsMin)
+            {
+                iocpThreads = iocpThreadsMin;
+               // m_log.InfoFormat("[OPENSIM MAIN]: Bumping up IO completion threads to {0}",iocpThreads);
+            }
+			// Make sure we don't overallocate IOCP threads and thrash system resources
+            if ( iocpThreads > iocpThreadsMax )
+            {
+                iocpThreads = iocpThreadsMax;
+                //m_log.InfoFormat("[OPENSIM MAIN]: Limiting IO completion threads to {0}",iocpThreads);
+            }
+			// set the resulting worker and IO completion thread counts back to ThreadPool
+            if ( System.Threading.ThreadPool.SetMaxThreads(workerThreads, iocpThreads) )
+			{
+	            //m_log.InfoFormat("[OPENSIM MAIN]: Threadpool set to {0} worker threads and {1} IO completion threads", workerThreads, iocpThreads);
+			}
+			//else
+			//{
+	            //m_log.Info("[OPENSIM MAIN]: Threadpool reconfiguration failed, runtime defaults still in effect.");				
 
             // Check if the system is compatible with OpenSimulator.
             // Ensures that the minimum system requirements are met
