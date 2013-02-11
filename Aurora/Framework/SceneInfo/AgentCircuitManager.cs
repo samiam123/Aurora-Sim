@@ -135,7 +135,7 @@ namespace Aurora.Framework
                 AgentCircuits[agentData.circuitcode].SecureSessionID = agentData.SecureSessionID;
                 AgentCircuits[agentData.circuitcode].SessionID = agentData.SessionID;
 
-                // MainConsole.Instance.Debug("update user start pos is " + agentData.startpos.X + " , " + agentData.startpos.Y + " , " + agentData.startpos.Z);
+                MainConsole.Instance.Debug("update user start pos is " + agentData.startpos.X + " , " + agentData.startpos.Y + " , " + agentData.startpos.Z); //Un-Commented for debugging -VS
             }
         }
 

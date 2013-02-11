@@ -40,7 +40,7 @@ namespace OpenSim.Region.ClientStack.LindenUDP
     /// </summary>
     public class J2KImage
     {
-        private const int IMAGE_PACKET_SIZE = 1000;
+        private const int IMAGE_PACKET_SIZE = 1000; //These are also set in client. If you want this bigger both sides need changed -VS
         private const int FIRST_PACKET_SIZE = 600;
 
         private readonly LLImageManager m_imageManager;
