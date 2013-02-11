@@ -931,17 +931,28 @@ namespace Aurora.Framework
 
         public void ReadSculptData(byte[] data, int pos)
         {
-            byte[] SculptTextureUUID = new byte[16];
-            UUID SculptUUID = UUID.Zero;
-            byte SculptTypel = data[16 + pos];
 
-            if (data.Length + pos >= 17)
+            // byte[] SculptTextureUUID = new byte[16]; //was -VS
+           // UUID SculptUUID = UUID.Zero;
+           // byte SculptTypel = data[16 + pos];
+
+            UUID SculptUUID;
+            byte SculptTypel;
+
+            // if (data.Length + pos >= 17)
+            
+                if (data.Length-pos >= 17) //added -VS
+
+
             {
                 _sculptEntry = true;
-                SculptTextureUUID = new byte[16];
+               // SculptTextureUUID = new byte[16]; // was -VS
+               byte[] SculptTextureUUID = new byte[16];
                 SculptTypel = data[16 + pos];
                 Array.Copy(data, pos, SculptTextureUUID, 0, 16);
                 SculptUUID = new UUID(SculptTextureUUID, 0);
+      
+
             }
             else
             {
