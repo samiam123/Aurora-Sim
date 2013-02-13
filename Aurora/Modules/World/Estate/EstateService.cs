@@ -582,7 +582,7 @@ namespace Aurora.Modules.Estate
                     {
                         bool found = false;
                         //We need to check here as well for bans, can't toss someone into a parcel they are banned from
-#if (!ISWIN)
+//#if (!ISWIN)
                         foreach (ILandObject Parcel in Parcels)
                         {
                             if (!Parcel.IsBannedFromLand(userID))
@@ -598,8 +598,8 @@ namespace Aurora.Modules.Estate
                                 found = true;
                             }
                         }
-#else
-                        foreach (ILandObject Parcel in Parcels.Where(Parcel => !Parcel.IsBannedFromLand(userID)))
+//#else
+                        /* foreach (ILandObject Parcel in Parcels.Where(Parcel => !Parcel.IsBannedFromLand(userID)))
                         {
                             //Now we have to check their userloc
                             if (ILO.LandData.LandingType == (int) LandingType.None)
@@ -612,6 +612,8 @@ namespace Aurora.Modules.Estate
                             found = true;
                         }
 #endif
+                        */
+
                         if (!found) //Dump them at the edge
                         {
                             if (Sp != null)
