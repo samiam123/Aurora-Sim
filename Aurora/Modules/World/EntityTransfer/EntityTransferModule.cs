@@ -965,15 +965,15 @@ namespace Aurora.Modules.EntityTransfer
         /// <returns></returns>
         public IScene GetScene(UUID RegionID)
         {
-#if (!ISWIN)
+//#if (!ISWIN)
             foreach (IScene scene in m_scenes)
             {
                 if (scene.RegionInfo.RegionID == RegionID) return scene;
             }
             return null;
-#else
-            return m_scenes.FirstOrDefault(scene => scene.RegionInfo.RegionID == RegionID);
-#endif
+//#else
+//            return m_scenes.FirstOrDefault(scene => scene.RegionInfo.RegionID == RegionID);
+//#endif
         }
 
         #endregion
