@@ -479,8 +479,11 @@ namespace OpenSim.Region.Framework.Scenes.Components
                 {
                     if (o == m_defaultValue)
                         return null;
-                    if (copy)
-                        return o.Copy();
+
+                    // Commented out as un-used currently -VS
+                    //if (copy) 
+                     //   return o.Copy();
+
                     return o;
                 }
             }
