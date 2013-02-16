@@ -56,10 +56,13 @@ namespace Aurora.Services.DataService
 
                 DataManager.DataManager.RegisterPlugin(this);
 
-                MainConsole.Instance.Commands.AddCommand("fix missing region owner", "fix missing region owner", "Attempts to fix missing region owners in the database.", delegate(string[] cmd)
+                if (MainConsole.Instance != null)
                 {
-                    FixMissingRegionOwners();
-                });
+                    MainConsole.Instance.Commands.AddCommand("fix missing region owner", "fix missing region owner", "Attempts to fix missing region owners in the database.", delegate(string[] cmd)
+                    {
+                        FixMissingRegionOwners();
+                    });
+                }
             }
         }
 
@@ -504,10 +507,6 @@ namespace Aurora.Services.DataService
                     map["owner_uuid"] = (!map.ContainsKey("owner_uuid") || map["owner_uuid"].AsUUID() == UUID.Zero) ? OSD.FromUUID(UUID.Parse(query[i + 6])) : map["owner_uuid"];
                     map["EstateOwner"] = (!map.ContainsKey("EstateOwner") || map["EstateOwner"].AsUUID() == UUID.Zero) ? OSD.FromUUID(UUID.Parse(query[i + 6])) : map["EstateOwner"];
                     data.FromOSD(map);
-
-                    //Check whether it should be down
-                    if (data.LastSeen > (Util.UnixTimeSinceEpoch() + (1000 * 6)))
-                        data.Access |= (int)SimAccess.Down;
 
                     if (!regionData.Contains(data))
                         regionData.Add(data);
