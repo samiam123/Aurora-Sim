@@ -447,7 +447,7 @@ namespace Aurora.Modules.Startup.FileBasedSimulationData
             {
                 if (engines != null)
                 {
-#if (!ISWIN)
+//#if (!ISWIN)
                     foreach (IScriptModule engine in engines)
                     {
                         if (engine != null)
@@ -455,12 +455,13 @@ namespace Aurora.Modules.Startup.FileBasedSimulationData
                             engine.SaveStateSaves();
                         }
                     }
-#else
+/*#else
                     foreach (IScriptModule engine in engines.Where(engine => engine != null))
                     {
                         engine.SaveStateSaves();
                     }
 #endif
+ * */
                 }
             }
             catch (Exception ex)
@@ -541,7 +542,7 @@ namespace Aurora.Modules.Startup.FileBasedSimulationData
 
                 ISceneEntity[] saveentities = m_scene.Entities.GetEntities();
                 List<UUID> entitiesToSave = new List<UUID>();
-                foreach (ISceneEntity entity in saveentities)
+                foreach (ISceneEntity entity in saveentities) //-VS Hack point mabey
                 {
                     try
                     {
@@ -608,6 +609,7 @@ namespace Aurora.Modules.Startup.FileBasedSimulationData
                                 ((entity.RootChild.Flags & PrimFlags.Temporary) == PrimFlags.Temporary)
                                 || ((entity.RootChild.Flags & PrimFlags.TemporaryOnRez) == PrimFlags.TemporaryOnRez))
                                 continue;
+                            
                             //Write all entities
                             byte[] xml = ((ISceneObject) entity).ToBinaryXml2();
                             writer.WriteFile("entities/" + entity.UUID.ToString(), xml);
@@ -701,7 +703,7 @@ namespace Aurora.Modules.Startup.FileBasedSimulationData
             if (asset != null) // Found it so write it -VS
                 writer.WriteFile("assets/" + asset.ID, OSDParser.SerializeJsonString(asset.ToOSD()));
             else
-                //MainConsole.Instance.WarnFormat("[FileBasedSimulationData]: Could not find asset {0} to save.", id);
+                MainConsole.Instance.WarnFormat("[FileBasedSimulationData]: Could not find asset in DataBase {0} to save.", asset);
                 return; //Nothing can be done about this anyway so no point in the spam -VS
         }
 
