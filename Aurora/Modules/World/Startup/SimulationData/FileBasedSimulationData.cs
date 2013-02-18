@@ -703,7 +703,7 @@ namespace Aurora.Modules.Startup.FileBasedSimulationData
             if (asset != null) // Found it so write it -VS
                 writer.WriteFile("assets/" + asset.ID, OSDParser.SerializeJsonString(asset.ToOSD()));
             else
-                MainConsole.Instance.WarnFormat("[FileBasedSimulationData]: Could not find asset in DataBase {0} to save.", asset);
+                MainConsole.Instance.WarnFormat("[FileBasedSimulationData]: Could not find asset in DataBase {0} to save.", asset.ID);
                 return; //Nothing can be done about this anyway so no point in the spam -VS
         }
 
