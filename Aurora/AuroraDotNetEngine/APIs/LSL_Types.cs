@@ -2120,6 +2120,7 @@ namespace Aurora.ScriptEngine.AuroraDotNetEngine
                     return new LSLFloat(0.0);
             }
 
+#if !LINUX
             static public bool operator ==(LSLFloat f1, LSLFloat f2)
             {
                 return f1.value == f2.value;
@@ -2129,6 +2130,7 @@ namespace Aurora.ScriptEngine.AuroraDotNetEngine
             {
                 return f1.value != f2.value;
             }
+#endif
 
             static public LSLFloat operator ++(LSLFloat f)
             {
