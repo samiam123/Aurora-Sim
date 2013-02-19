@@ -152,14 +152,14 @@ namespace Aurora.Modules.WorldMap
                 terrainObj = CreateTerrain(renderer, textureTerrain);
                 if (drawPrimVolume && m_primMesher != null)
                 {
-#if (!ISWIN)
+//#if (!ISWIN)
                     foreach (ISceneEntity ent in m_scene.Entities.GetEntities())
                         foreach (ISceneChildEntity part in ent.ChildrenEntities())
                             CreatePrim(renderer, part);
-#else
-                    foreach (ISceneChildEntity part in m_scene.Entities.GetEntities().SelectMany(ent => ent.ChildrenEntities()))
-                        CreatePrim(renderer, part);
-#endif
+//#else
+//                    foreach (ISceneChildEntity part in m_scene.Entities.GetEntities().SelectMany(ent => ent.ChildrenEntities()))
+//                        CreatePrim(renderer, part);
+//#endif
                 }
                     
             }
