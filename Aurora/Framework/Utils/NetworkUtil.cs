@@ -77,7 +77,7 @@ namespace Aurora.Framework
                 return simulator;
 
             // Check if we're accessing localhost.
-#if (!ISWIN)
+//#if (!ISWIN)
             foreach (IPAddress host in Dns.GetHostAddresses(Dns.GetHostName()))
             {
                 if (host.Equals(user) && host.AddressFamily == AddressFamily.InterNetwork)
@@ -86,7 +86,7 @@ namespace Aurora.Framework
                     return host;
                 }
             }
-#else
+/* #else
             foreach (IPAddress host in Dns.GetHostAddresses(Dns.GetHostName()).Where(host => host.Equals(user) && host.AddressFamily == AddressFamily.InterNetwork))
             {
                 MainConsole.Instance.Info("[NetworkUtil] Localhost user detected, sending them '" + host + "' instead of '" +
@@ -94,6 +94,7 @@ namespace Aurora.Framework
                 return host;
             }
 #endif
+            */
 
             // Check for same LAN segment
             foreach (KeyValuePair<IPAddress, IPAddress> subnet in m_subnets)
@@ -105,7 +106,7 @@ namespace Aurora.Framework
                 if (subnetBytes.Length != destBytes.Length || subnetBytes.Length != localBytes.Length)
                     return null;
 
-#if (!ISWIN)
+///#if (!ISWIN)
                 bool any = false;
                 for (int i = 0; i < subnetBytes.Length; i++)
                 {
@@ -117,9 +118,10 @@ namespace Aurora.Framework
                     }
                 }
                 bool valid = !any;
-#else
+/* #else
                 bool valid = !subnetBytes.Where((t, i) => (localBytes[i] & t) != (destBytes[i] & t)).Any();
 #endif
+ */
 
                 if (subnet.Key.AddressFamily != AddressFamily.InterNetwork)
                     valid = false;
@@ -164,7 +166,7 @@ namespace Aurora.Framework
                 return null;
 
             // Check if we're accessing localhost.
-#if (!ISWIN)
+//#if (!ISWIN)
             foreach (KeyValuePair<IPAddress, IPAddress> pair in m_subnets)
             {
                 IPAddress host = pair.Value;
@@ -174,7 +176,7 @@ namespace Aurora.Framework
                     return destination;
                 }
             }
-#else
+ /* #else
             foreach (IPAddress host in m_subnets.Select(pair => pair.Value).Where(host => host.Equals(destination) && host.AddressFamily == AddressFamily.InterNetwork))
             {
                 MainConsole.Instance.Info("[NATROUTING] Localhost user detected, sending them '" + host + "' instead of '" +
@@ -182,6 +184,7 @@ namespace Aurora.Framework
                 return destination;
             }
 #endif
+  */
 
             // Check for same LAN segment
             foreach (KeyValuePair<IPAddress, IPAddress> subnet in m_subnets)
@@ -193,7 +196,7 @@ namespace Aurora.Framework
                 if (subnetBytes.Length != destBytes.Length || subnetBytes.Length != localBytes.Length)
                     return null;
 
-#if (!ISWIN)
+//#if (!ISWIN)
                 bool any = false;
                 for (int i = 0; i < subnetBytes.Length; i++)
                 {
@@ -205,9 +208,10 @@ namespace Aurora.Framework
                     }
                 }
                 bool valid = !any;
-#else
+/* #else
                 bool valid = !subnetBytes.Where((t, i) => (localBytes[i] & t) != (destBytes[i] & t)).Any();
 #endif
+*/
 
                 if (subnet.Key.AddressFamily != AddressFamily.InterNetwork)
                     valid = false;
@@ -221,7 +225,7 @@ namespace Aurora.Framework
             }
 
             // Check to see if we can find a IPv4 address.
-#if (!ISWIN)
+//#if (!ISWIN)
             foreach (IPAddress host in Dns.GetHostAddresses(defaultHostname))
             {
                 if (host.AddressFamily == AddressFamily.InterNetwork)
@@ -229,12 +233,13 @@ namespace Aurora.Framework
                     return host;
                 }
             }
-#else
+/*#else
             foreach (IPAddress host in Dns.GetHostAddresses(defaultHostname).Where(host => host.AddressFamily == AddressFamily.InterNetwork))
             {
                 return host;
             }
 #endif
+ */
 
             // Unable to find anything.
             throw new ArgumentException(
@@ -257,15 +262,16 @@ namespace Aurora.Framework
             if (IPAddress.TryParse(defaultHostname, out ia))
                 return ia;
 
-#if (!ISWIN)
+//#if (!ISWIN)
             foreach (IPAddress adr in Dns.GetHostAddresses(defaultHostname))
             {
                 if (adr.AddressFamily == AddressFamily.InterNetwork) return adr;
             }
             return null;
-#else
+/* #else
             return Dns.GetHostAddresses(defaultHostname).FirstOrDefault(Adr => Adr.AddressFamily == AddressFamily.InterNetwork);
 #endif
+ */
         }
 
         public static string GetHostFor(IPAddress user, string defaultHostname)

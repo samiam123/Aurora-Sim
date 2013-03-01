@@ -12792,11 +12792,16 @@ namespace Aurora.ScriptEngine.AuroraDotNetEngine.APIs
 
         public static void CacheCheck()
         {
-            foreach (UUID key in new List<UUID>(m_Notecards.Keys))
+            //foreach (UUID key in new List<UUID>(m_Notecards.Keys)) //was -VS
+            lock (m_Notecards) // added -VS
+
             {
-                Notecard nc = m_Notecards[key];
-                if (nc.lastRef.AddSeconds(30) < DateTime.Now)
-                    m_Notecards.Remove(key);
+                foreach (UUID key in new List<UUID>(m_Notecards.Keys))
+                {
+                    Notecard nc = m_Notecards[key];
+                    if (nc.lastRef.AddSeconds(30) < DateTime.Now)
+                        m_Notecards.Remove(key);
+                }
             }
         }
     }
