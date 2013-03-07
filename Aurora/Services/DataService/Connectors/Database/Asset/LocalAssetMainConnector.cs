@@ -201,7 +201,7 @@ namespace Aurora.Services.DataService.Connectors.Database.Asset
             try
             {
                 dr = m_Gd.QueryData("where id = '" + uuid + "'", "assets",
-                                    "id, name, description, assetType, local, temporary, asset_flags, creatorID, data");
+                                    "id, name, description, assetType, local, temporary, create_time, access_time, asset_flags, creatorID, data");
                 while (dr != null && dr.DataReader.Read())
                 {
                     return LoadAssetFromDataRead(dr.DataReader);
