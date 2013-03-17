@@ -102,10 +102,21 @@ namespace OpenSim.Services.CapsService
                     member["donated_square_meters"] = gmd.Contribution;
                     member["owner"] = (gmd.IsOwner ? "Y" : "N");
                     member["last_login"] = gmd.OnlineStatus;
-                    member["title"] = count;
+                    //member["title"] = count;
+                    if (titles.Contains(gmd.Title))  
+                       {  
+                            member["title"] = titles.FindIndex((s) => s==gmd.Title);  
+                       }  
+                        else  
+                       {  
+                            titles.Add(gmd.Title);  
+                            member["title"] = titles.Count;  
+                       }  
+
                     member["powers"] = gmd.AgentPowers;
-                    titles.Add(gmd.Title);
+                   // titles.Add(gmd.Title);
                     count++;
+                    members[gmd.AgentID.ToString()] = member; 
                 }
                 
                 OSDMap map = new OSDMap();
