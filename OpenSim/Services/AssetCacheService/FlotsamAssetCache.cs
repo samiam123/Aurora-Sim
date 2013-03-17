@@ -563,9 +563,15 @@ namespace OpenSim.Services
                 CacheScenes();
             }
 
-            foreach (string dir in Directory.GetDirectories(m_CacheDirectory))
+            //foreach (string dir in Directory.GetDirectories(m_CacheDirectory))
+            lock (m_fileCacheLock) 
             {
-                CleanExpiredFiles(dir, purgeLine);
+               // CleanExpiredFiles(dir, purgeLine);
+            foreach (string dir in Directory.GetDirectories(m_CacheDirectory))  
+                    {  
+                        CleanExpiredFiles(dir, purgeLine);  
+                    }  
+
             }
         }
 
@@ -577,13 +583,17 @@ namespace OpenSim.Services
         /// <param name = "dir"></param>
         private void CleanExpiredFiles(string dir, DateTime purgeLine)
         {
-            lock (m_fileCacheLock)
+            //lock (m_fileCacheLock)
+            foreach (string file in Directory.GetFiles(dir))
             {
-                foreach (string file in Directory.GetFiles(dir))
+                /* foreach (string file in Directory.GetFiles(dir))
                 {
                         if (File.GetLastAccessTime(file) < purgeLine)
                             File.Delete(file);
-                }
+                } */
+               if (File.GetLastAccessTime(file) < purgeLine)  
+                       File.Delete(file);  
+
             }
 
             // Recurse into lower tiers
@@ -592,7 +602,7 @@ namespace OpenSim.Services
                 CleanExpiredFiles(subdir, purgeLine);
             }
 
-            lock (m_fileCacheLock)
+            // lock (m_fileCacheLock)
             {
                 // Check if a tier directory is empty, if so, delete it
                 int dirSize = Directory.GetFiles(dir).Length + Directory.GetDirectories(dir).Length;
