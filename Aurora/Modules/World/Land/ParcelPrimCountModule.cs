@@ -262,6 +262,9 @@ namespace Aurora.Modules.Land
                 UUID landOwner = landData.OwnerID;
 
                 parcelCounts.Objects[obj.UUID] = obj;
+                if (!m_SimwideCounts.ContainsKey(landOwner))  
+                    m_SimwideCounts.Add(landOwner, 0); 
+
                 m_SimwideCounts[landOwner] += obj.PrimCount;
 
                 if (parcelCounts.Users.ContainsKey(obj.OwnerID))

@@ -82,6 +82,7 @@ namespace Aurora.Modules.WorldMap
 
         public void CreateMapTile(out Bitmap terrainBMP, out Bitmap mapBMP)
         {
+            int start = Environment.TickCount; //added -VS
             bool drawPrimVolume = true;
             string tileRenderer = "WarpTileRenderer";
 
@@ -105,7 +106,7 @@ namespace Aurora.Modules.WorldMap
                 terrainRenderer = new WarpTileRenderer();
                 drawPrimVolume = false;
             }
-            MainConsole.Instance.Debug("[MAPTILE]: Generating Maptile using " + tileRenderer);
+           // MainConsole.Instance.Debug("[MAPTILE]: Generating Maptile using " + tileRenderer); //was -VS
 
             terrainRenderer.Initialise(m_scene, m_config);
 
@@ -128,6 +129,7 @@ namespace Aurora.Modules.WorldMap
                 SaveCache();
                 m_mapping.Clear();
             }
+            MainConsole.Instance.InfoFormat("[MapTileGenerator]: Generating Maptile using {0} took {1} ms", tileRenderer, (Environment.TickCount - start));
         }
 
         public void CreateMapTile(out byte[] terrain, out byte[] map)

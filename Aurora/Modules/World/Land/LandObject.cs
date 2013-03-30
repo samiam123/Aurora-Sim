@@ -230,8 +230,8 @@ namespace Aurora.Modules.Land
 
         public void UpdateLandProperties(LandUpdateArgs args, IClientAPI remote_client)
         {
-            if (m_scene.Permissions.CanEditParcel(remote_client.AgentId, this) &&
-                m_scene.RegionInfo.EstateSettings.AllowParcelChanges)
+
+            if (m_scene.RegionInfo.EstateSettings.AllowParcelChanges)//added for above -VS
             {
                 try
                 {
@@ -281,7 +281,7 @@ namespace Aurora.Modules.Land
                         LandData.ObscureMedia = args.ObscureMedia;
                     }
 
-                    if (m_scene.RegionInfo.RegionSettings.BlockFly &&
+                    /*if (m_scene.RegionInfo.RegionSettings.BlockFly &&
                         ((args.ParcelFlags & (uint) ParcelFlags.AllowFly) == (uint) ParcelFlags.AllowFly))
                         //Vanquish flying as per estate settings!
                         args.ParcelFlags &= ~(uint) ParcelFlags.AllowFly;
@@ -300,7 +300,50 @@ namespace Aurora.Modules.Land
                     if (m_scene.RegionInfo.RegionSettings.BlockShowInSearch &&
                         ((args.ParcelFlags & (uint) ParcelFlags.ShowDirectory) == (uint) ParcelFlags.ShowDirectory))
                         //Vanquish show in search as per estate settings!
-                        args.ParcelFlags &= ~(uint) ParcelFlags.ShowDirectory;
+                        args.ParcelFlags &= ~(uint) ParcelFlags.ShowDirectory;*/
+                   if (m_scene.Permissions.CanEditParcelProperties(remote_client.AgentId, this, GroupPowers.LandOptions))  
+                        {  
+                            if (m_scene.RegionInfo.RegionSettings.BlockFly &&  
+                                ((args.ParcelFlags & (uint)ParcelFlags.AllowFly) == (uint)ParcelFlags.AllowFly))  
+                                //Vanquish flying as per estate settings!  
+                                args.ParcelFlags &= ~(uint)ParcelFlags.AllowFly;  
+      
+                            if (m_scene.RegionInfo.RegionSettings.RestrictPushing &&  
+                                ((args.ParcelFlags & (uint)ParcelFlags.RestrictPushObject) ==  
+                                 (uint)ParcelFlags.RestrictPushObject))  
+                               //Vanquish pushing as per estate settings!  
+                                args.ParcelFlags &= ~(uint)ParcelFlags.RestrictPushObject;  
+      
+                            if (!m_scene.RegionInfo.EstateSettings.AllowLandmark &&  
+                                ((args.ParcelFlags & (uint)ParcelFlags.AllowLandmark) == (uint)ParcelFlags.AllowLandmark))  
+                                //Vanquish landmarks as per estate settings!  
+                                args.ParcelFlags &= ~(uint)ParcelFlags.AllowLandmark;  
+      
+                            if (m_scene.RegionInfo.RegionSettings.BlockShowInSearch &&  
+                                ((args.ParcelFlags & (uint)ParcelFlags.ShowDirectory) == (uint)ParcelFlags.ShowDirectory))  
+                                //Vanquish show in search as per estate settings!  
+                                args.ParcelFlags &= ~(uint)ParcelFlags.ShowDirectory;  
+      
+                            if ((args.ParcelFlags & (uint)ParcelFlags.ShowDirectory) == (uint)ParcelFlags.ShowDirectory &&  
+                                (LandData.Flags & (uint)ParcelFlags.ShowDirectory) != (uint)ParcelFlags.ShowDirectory)  
+                            {  
+                                //If the flags have changed, we need to charge them.. maybe  
+                                // We really need to check per month or whatever  
+                                IScheduledMoneyModule moneyModule = m_scene.RequestModuleInterface<IScheduledMoneyModule>();  
+                                if (moneyModule != null)  
+                                {  
+                                    if (  
+                                        !moneyModule.Charge(remote_client.AgentId, 30,  
+                                                            "Parcel Show in Search Fee - " + LandData.GlobalID, 7))  
+                                    {  
+                                        remote_client.SendAlertMessage(  
+                                            "You don't have enough money to set this parcel in search.");  
+                                        args.ParcelFlags &= (uint)ParcelFlags.ShowDirectory;  
+                                    }  
+                               }  
+                            }  
+                            LandData.Flags = args.ParcelFlags;  
+                       }  
 
                     if (m_scene.Permissions.CanEditParcelProperties(remote_client.AgentId, this,
                                                                     GroupPowers.SetLandingPoint))
@@ -326,7 +369,7 @@ namespace Aurora.Modules.Land
                         LandData.PassPrice = args.PassPrice;
                     }
 
-                    if ((args.ParcelFlags & (uint) ParcelFlags.ShowDirectory) == (uint) ParcelFlags.ShowDirectory &&
+                    /*if ((args.ParcelFlags & (uint) ParcelFlags.ShowDirectory) == (uint) ParcelFlags.ShowDirectory &&
                         (LandData.Flags & (uint) ParcelFlags.ShowDirectory) != (uint) ParcelFlags.ShowDirectory)
                     {
                         //If the flags have changed, we need to charge them.. maybe
@@ -341,9 +384,14 @@ namespace Aurora.Modules.Land
                             }
                         }
                     }
-                    LandData.Flags = args.ParcelFlags;
+                    LandData.Flags = args.ParcelFlags;*/
 
-                    LandData.Status = LandData.OwnerID == m_parcelManagementModule.GodParcelOwner ? ParcelStatus.Abandoned : LandData.AuthBuyerID != UUID.Zero ? ParcelStatus.LeasePending : ParcelStatus.Leased;
+                    //LandData.Status = LandData.OwnerID == m_parcelManagementModule.GodParcelOwner ? ParcelStatus.Abandoned : LandData.AuthBuyerID != UUID.Zero ? ParcelStatus.LeasePending : ParcelStatus.Leased;
+                    LandData.Status = LandData.OwnerID == m_parcelManagementModule.GodParcelOwner
+                                          ? ParcelStatus.Abandoned
+                                          : LandData.AuthBuyerID != UUID.Zero
+                                                ? ParcelStatus.LeasePending
+                                                : ParcelStatus.Leased;
 
                     m_parcelManagementModule.UpdateLandObject(this);
 
@@ -365,18 +413,18 @@ namespace Aurora.Modules.Land
                 //Sell all objects on the parcel too
                 IPrimCountModule primCountModule = m_scene.RequestModuleInterface<IPrimCountModule>();
                 IPrimCounts primCounts = primCountModule.GetPrimCounts(LandData.GlobalID);
-#if (!ISWIN)
-                foreach (ISceneEntity obj in primCounts.Objects)
-                {
-                    if (obj.OwnerID == LandData.OwnerID)
-                    {
-                        //Fix the owner/last owner
-                        obj.SetOwnerId(avatarID);
-                        //Then update all clients around
-                        obj.ScheduleGroupUpdate(PrimUpdateFlags.FullUpdate);
-                    }
-                }
-#else
+//#if (!ISWIN)
+//                foreach (ISceneEntity obj in primCounts.Objects)
+//                {
+//                    if (obj.OwnerID == LandData.OwnerID)
+//                    {
+//                        //Fix the owner/last owner
+//                        obj.SetOwnerId(avatarID);
+//                        //Then update all clients around
+//                        obj.ScheduleGroupUpdate(PrimUpdateFlags.FullUpdate);
+//                    }
+//                }
+//#else
                 foreach (ISceneEntity obj in primCounts.Objects.Where(obj => obj.OwnerID == LandData.OwnerID))
                 {
                     //Fix the owner/last owner
@@ -384,7 +432,7 @@ namespace Aurora.Modules.Land
                     //Then update all clients around
                     obj.ScheduleGroupUpdate(PrimUpdateFlags.FullUpdate);
                 }
-#endif
+//#endif
             }
 
             LandData.OwnerID = avatarID;
@@ -580,20 +628,20 @@ namespace Aurora.Modules.Land
             List<List<UUID>> list = new List<List<UUID>>();
             int num = 0;
             list.Add(new List<UUID>());
-#if (!ISWIN)
-            foreach (ParcelManager.ParcelAccessEntry entry in LandData.ParcelAccessList)
-            {
-                if (entry.Flags == flag)
-                {
-                    if (list[num].Count > ParcelManagementModule.LAND_MAX_ENTRIES_PER_PACKET)
-                    {
-                        num++;
-                        list.Add(new List<UUID>());
-                    }
-                    list[num].Add(entry.AgentID);
-                }
-            }
-#else
+//#if (!ISWIN)
+//            foreach (ParcelManager.ParcelAccessEntry entry in LandData.ParcelAccessList)
+ //           {
+ //              if (entry.Flags == flag)
+ //               {
+ //                   if (list[num].Count > ParcelManagementModule.LAND_MAX_ENTRIES_PER_PACKET)
+ //                   {
+ //                       num++;
+ //                       list.Add(new List<UUID>());
+ //                   }
+ //                   list[num].Add(entry.AgentID);
+ //               }
+//            }
+//#else
             foreach (ParcelManager.ParcelAccessEntry entry in LandData.ParcelAccessList.Where(entry => entry.Flags == flag))
             {
                 if (list[num].Count > ParcelManagementModule.LAND_MAX_ENTRIES_PER_PACKET)
@@ -603,7 +651,7 @@ namespace Aurora.Modules.Land
                 }
                 list[num].Add(entry.AgentID);
             }
-#endif
+//#endif
             if (list[0].Count == 0)
             {
                 list[num].Add(UUID.Zero);
