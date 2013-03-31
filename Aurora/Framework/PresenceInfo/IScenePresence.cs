@@ -75,6 +75,12 @@ namespace Aurora.Framework
         Vector3 OffsetPosition { get; set; }
 
         /// <summary>
+        /// <summary>  
+        /// The 'fake' angular velocity of the avatar (for the client)  
+        /// </summary>  
+            Vector3 AngularVelocity { get; }  
+        /// <summary>  
+ 
         /// If the avatar is sitting on something, this is the object it is sitting on's UUID
         /// </summary>
         UUID ParentID { get; }
