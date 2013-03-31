@@ -1033,7 +1033,9 @@ namespace Aurora.Modules.Inventory
                     return null;
 
                 agentItem.Folder = folderId;
-                AddInventoryItem(remoteClient, agentItem);
+                //AddInventoryItem(remoteClient, agentItem);
+                AddInventoryItemAsync(remoteClient, agentItem);
+
                 return agentItem;
             }
             return null;
@@ -1365,18 +1367,26 @@ namespace Aurora.Modules.Inventory
         /// Add the given inventory item to a user's inventory.
         /// </summary>
         /// <param name="item">The item to add</param>
-        public void AddInventoryItem(InventoryItemBase item)
+        //public void AddInventoryItem(InventoryItemBase item)
+        public void AddInventoryItemAsync(InventoryItemBase item)
         {
             m_scene.InventoryService.AddItemAsync(item, null);
         }
 
         /// <summary>
+        /// 
+        public void AddInventoryItem(InventoryItemBase item)
+        {
+            m_scene.InventoryService.AddItem(item);
+        }
+
         /// Add an inventory item to an avatar's inventory.
         /// </summary>
         /// <param name="remoteClient">The remote client controlling the avatar</param>
         /// <param name="item">The item.  This structure contains all the item metadata, including the folder
         /// in which the item is to be placed.</param>
-        public void AddInventoryItem(IClientAPI remoteClient, InventoryItemBase item)
+        //public void AddInventoryItem(IClientAPI remoteClient, InventoryItemBase item)
+        public void AddInventoryItemAsync(IClientAPI remoteClient, InventoryItemBase item)
         {
             m_scene.InventoryService.AddItemAsync(item,
                 (itm) => remoteClient.SendInventoryItemCreateUpdate(itm, 0));
@@ -1667,23 +1677,31 @@ namespace Aurora.Modules.Inventory
         /// <returns></returns>
         public UUID MoveTaskInventoryItemsToUserInventory (UUID destID, string name, ISceneChildEntity host, List<UUID> items)
         {
-            InventoryFolderBase rootFolder = m_scene.InventoryService.GetRootFolder(destID);
+            //InventoryFolderBase rootFolder = m_scene.InventoryService.GetRootFolder(destID);
 
             UUID newFolderID = UUID.Random();
 
-            InventoryFolderBase newFolder = new InventoryFolderBase(newFolderID, name, destID, -1, rootFolder.ID, rootFolder.Version);
-            m_scene.InventoryService.AddFolder(newFolder);
+           // InventoryFolderBase newFolder = new InventoryFolderBase(newFolderID, name, destID, -1, rootFolder.ID, rootFolder.Version);
+           // m_scene.InventoryService.AddFolder(newFolder);
 
-            int countLeft = items.Count;
-            foreach (UUID itemID in items)
+            //int countLeft = items.Count;
+            //foreach (UUID itemID in items)
+            Util.FireAndForget((o) => 
             {
-                InventoryItemBase agentItem = CreateAgentInventoryItemFromTask(destID, host, itemID);
+                //InventoryItemBase agentItem = CreateAgentInventoryItemFromTask(destID, host, itemID);
+             InventoryFolderBase rootFolder = m_scene.InventoryService.GetRootFolder(destID);
+               InventoryFolderBase newFolder = new InventoryFolderBase(newFolderID, name, destID, -1, rootFolder.ID, rootFolder.Version); 
+               m_scene.InventoryService.AddFolder(newFolder);
 
-                if (agentItem != null)
+                //if (agentItem != null)
+                foreach (UUID itemID in items)
+
                 {
-                    agentItem.Folder = newFolderID;
+                    //agentItem.Folder = newFolderID;
+                 InventoryItemBase agentItem = CreateAgentInventoryItemFromTask(destID, host, itemID);
 
-                    m_scene.InventoryService.AddItemAsync(agentItem, (itm) =>
+                   // m_scene.InventoryService.AddItemAsync(agentItem, (itm) =>
+                   /*if (agentItem != null)
                     {
                         if (--countLeft == 0)
                         {
@@ -1695,8 +1713,18 @@ namespace Aurora.Modules.Inventory
                             }
                         }
                     });
+                    */
+                    agentItem.Folder = newFolderID;
+                    m_scene.InventoryService.AddItem(agentItem); 
                 }
-            }
+           // }
+      IScenePresence avatar;  
+                    if (m_scene.TryGetScenePresence(destID, out avatar))  
+                    {  
+                        SendInventoryUpdate(avatar.ControllingClient, rootFolder, true, false);  
+                        SendInventoryUpdate(avatar.ControllingClient, newFolder, false, true);  
+                    }  
+               });  
 
             return newFolderID;
         }

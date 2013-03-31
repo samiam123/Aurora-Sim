@@ -43,7 +43,8 @@ namespace OpenSim.Region.Framework.Interfaces
         ///   Add the given inventory item to a user's inventory.
         /// </summary>
         /// <param name = "item">The item to add</param>
-        void AddInventoryItem(InventoryItemBase item);
+        //void AddInventoryItem(InventoryItemBase item);// was -VS
+        void AddInventoryItemAsync(InventoryItemBase item);
 
         /// <summary>
         ///   Add an inventory item to an avatar's inventory.
@@ -51,7 +52,8 @@ namespace OpenSim.Region.Framework.Interfaces
         /// <param name = "remoteClient">The remote client controlling the avatar</param>
         /// <param name = "item">The item.  This structure contains all the item metadata, including the folder
         ///   in which the item is to be placed.</param>
-        void AddInventoryItem(IClientAPI remoteClient, InventoryItemBase item);
+       // void AddInventoryItem(IClientAPI remoteClient, InventoryItemBase item);// was
+        void AddInventoryItemAsync(IClientAPI remoteClient, InventoryItemBase item);
 
         /// <summary>
         ///   Return the given objects to the agent given

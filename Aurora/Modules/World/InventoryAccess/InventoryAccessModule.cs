@@ -508,7 +508,7 @@ namespace Aurora.Modules.InventoryAccess
                     item.Flags |= (uint)InventoryItemFlags.ObjectHasMultipleItems;
                 item.CreationDate = Util.UnixTimeSinceEpoch();
 
-                m_LLCLientInventoryModule.AddInventoryItem(item);
+                m_LLCLientInventoryModule.AddInventoryItemAsync(item);
 
                 if (SP != null && SP.ControllingClient != null && item.Owner == SP.ControllingClient.AgentId)
                 {
