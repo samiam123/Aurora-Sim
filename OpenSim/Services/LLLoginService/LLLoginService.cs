@@ -615,7 +615,8 @@ namespace OpenSim.Services.LLLoginService
                     }
                 }
 
-                avappearance = FixCurrentOutFitFolder(account.PrincipalID, avappearance);
+               // avappearance = FixCurrentOutFitFolder(account.PrincipalID, avappearance);//was -VS
+                FixCurrentOutFitFolder(account.PrincipalID, ref avappearance); //added 
                 
                 //
                 // Instantiate/get the simulation interface and launch an agent at the destination
@@ -1239,10 +1240,12 @@ namespace OpenSim.Services.LLLoginService
             return avappearance;
         }
 
-        public AvatarAppearance FixCurrentOutFitFolder(UUID user, AvatarAppearance avappearance)
+        //public AvatarAppearance FixCurrentOutFitFolder(UUID user, AvatarAppearance avappearance)//was -vs
+        public void FixCurrentOutFitFolder(UUID user, ref AvatarAppearance avappearance)
         {
             InventoryFolderBase CurrentOutFitFolder = m_InventoryService.GetFolderForType(user, 0, AssetType.CurrentOutfitFolder);
-			if (CurrentOutFitFolder == null) return avappearance;
+			//if (CurrentOutFitFolder == null) return avappearance;//was -VS
+            if (CurrentOutFitFolder == null) return;
             List<InventoryItemBase> ic = m_InventoryService.GetFolderItems(user, CurrentOutFitFolder.ID);
             List<UUID> brokenLinks = new List<UUID>();
             List<UUID> OtherStuff = new List<UUID>();
@@ -1323,7 +1326,7 @@ namespace OpenSim.Services.LLLoginService
             if (brokenLinks.Count != 0)
                 m_InventoryService.DeleteItems(user, brokenLinks);
 
-            return avappearance;
+           // return avappearance;//was -VS
 
         }
 
