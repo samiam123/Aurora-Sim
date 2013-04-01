@@ -1137,9 +1137,9 @@ namespace OpenSim.Services.InventoryService
                 if ((item.CurrentPermissions & (uint)PermissionMask.Transfer) == 0)
                     return null;
 
-                IUserFinder uman = m_registry.RequestModuleInterface<IUserFinder>();
-                if (uman != null)
-                    uman.AddUser(item.CreatorIdAsUuid, item.CreatorData);
+               // IUserFinder uman = m_registry.RequestModuleInterface<IUserFinder>();
+              //  if (uman != null)
+              //      uman.AddUser(item.CreatorIdAsUuid, item.CreatorData);
 
                 // Insert a copy of the item into the recipient
                 InventoryItemBase itemCopy = new InventoryItemBase

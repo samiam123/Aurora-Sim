@@ -181,7 +181,7 @@ namespace Aurora.Modules.Archivers
             //We save the groups so that we can back them up later
             List<SceneObjectGroup> groupsToBackup = new List<SceneObjectGroup>();
             List<LandData> landData = new List<LandData>();
-            IUserFinder UserManager = m_scene.RequestModuleInterface<IUserFinder>();
+            //IUserFinder UserManager = m_scene.RequestModuleInterface<IUserFinder>();// was
 
             // must save off some stuff until after assets have been saved and recieved new uuids
             // keeping these collection local because I am sure they will get large and garbage collection is better that way
@@ -311,8 +311,8 @@ namespace Aurora.Modules.Archivers
                         if (string.IsNullOrEmpty(part.CreatorData))
                             part.CreatorID = ResolveUserUuid(part.CreatorID, part.CreatorID, part.CreatorData, part.AbsolutePosition, landData);
 
-                        if (UserManager != null)
-                            UserManager.AddUser(part.CreatorID, part.CreatorData);
+                        //if (UserManager != null)
+                        //    UserManager.AddUser(part.CreatorID, part.CreatorData);
 
                         part.OwnerID = ResolveUserUuid(part.OwnerID, part.CreatorID, part.CreatorData, part.AbsolutePosition, landData);
 
@@ -333,8 +333,8 @@ namespace Aurora.Modules.Archivers
                                 kvp.Value.OwnerID = ResolveUserUuid(kvp.Value.OwnerID, kvp.Value.CreatorID, kvp.Value.CreatorData, part.AbsolutePosition, landData);
                                 if (string.IsNullOrEmpty(kvp.Value.CreatorData))
                                     kvp.Value.CreatorID = ResolveUserUuid(kvp.Value.CreatorID, kvp.Value.CreatorID, kvp.Value.CreatorData, part.AbsolutePosition, landData);
-                                if (UserManager != null)
-                                    UserManager.AddUser(kvp.Value.CreatorID, kvp.Value.CreatorData);
+                                //if (UserManager != null)
+                                   // UserManager.AddUser(kvp.Value.CreatorID, kvp.Value.CreatorData);
                             }
                         }
                     }
